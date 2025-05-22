@@ -1,103 +1,121 @@
 {% extends 'base.html' %}
 
 {% block title %}Dashboard - Access Control System{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
+
+{% block breadcrumb_items %}
+<div class="breadcrumb-item">Dashboard</div>
+{% endblock %}
+
+{% block page_title %}Welcome to Access Control{% endblock %}
+{% block page_description %}Manage your organization, users, and permissions from a central dashboard.{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
+<div class="dashboard-grid">
     <!-- Summary Cards -->
-    <div class="dashboard-cards">
+    <div class="stats-cards">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Organizations</h3>
-            </div>
-            <div class="card-body">
-                <h2 id="organizationCount">-</h2>
-                <p>Total organizations in system</p>
-                <a href="/organisations/" class="btn btn-sm btn-primary">View All</a>
+            <div class="card-body stats-card">
+                <div class="stats-icon organizations-icon">
+                    <i data-feather="briefcase"></i>
+                </div>
+                <div class="stats-content">
+                    <h3 class="stats-title">Organizations</h3>
+                    <p class="stats-value" id="organizationCount">5</p>
+                    <p class="stats-description">Organizational units in hierarchy</p>
+                    <a href="/organisations/" class="stats-link">Manage <i data-feather="chevron-right"></i></a>
+                </div>
             </div>
         </div>
         
         <div class="card">
+            <div class="card-body stats-card">
+                <div class="stats-icon users-icon">
+                    <i data-feather="users"></i>
+                </div>
+                <div class="stats-content">
+                    <h3 class="stats-title">Users</h3>
+                    <p class="stats-value" id="userCount">4</p>
+                    <p class="stats-description">Active users in the system</p>
+                    <a href="/users/" class="stats-link">Manage <i data-feather="chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body stats-card">
+                <div class="stats-icon roles-icon">
+                    <i data-feather="shield"></i>
+                </div>
+                <div class="stats-content">
+                    <h3 class="stats-title">Roles & Permissions</h3>
+                    <p class="stats-value" id="roleCount">4</p>
+                    <p class="stats-description">Defined roles with specific permissions</p>
+                    <a href="/permissions/" class="stats-link">Manage <i data-feather="chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feature Descriptions -->
+    <div class="feature-cards">
+        <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Users</h3>
+                <h3 class="card-title">Access Control System</h3>
             </div>
             <div class="card-body">
-                <h2 id="userCount">-</h2>
-                <p>Total users by role</p>
-                <div class="role-breakdown" id="roleBreakdown">
-                    <div class="role-item">
-                        <span class="role-name">Admin</span>
-                        <span class="role-count">-</span>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i data-feather="git-merge"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4 class="feature-title">Organization Hierarchy</h4>
+                            <p class="feature-description">Create your organizational structure with departments, teams, and groups in a hierarchical tree.</p>
+                        </div>
                     </div>
-                    <div class="role-item">
-                        <span class="role-name">Manager</span>
-                        <span class="role-count">-</span>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i data-feather="user-plus"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4 class="feature-title">User Management</h4>
+                            <p class="feature-description">Assign users to organizations and give them specific roles that control their access.</p>
+                        </div>
                     </div>
-                    <div class="role-item">
-                        <span class="role-name">User</span>
-                        <span class="role-count">-</span>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i data-feather="lock"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4 class="feature-title">Role-Based Permissions</h4>
+                            <p class="feature-description">Define what actions users can perform based on their assigned role.</p>
+                        </div>
                     </div>
                 </div>
-                <a href="/users/" class="btn btn-sm btn-primary">View All</a>
             </div>
         </div>
-        
+    </div>
+    
+    <!-- Current User Info -->
+    <div class="user-info-card">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Activity</h3>
+                <h3 class="card-title">Current User</h3>
             </div>
             <div class="card-body">
-                <h2 id="activityCount">-</h2>
-                <p>Recent activities</p>
-                <a href="#" class="btn btn-sm btn-primary">View Logs</a>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Organization Structure Preview -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Organization Structure</h3>
-            <a href="/organisations/" class="btn btn-sm">View Full Structure</a>
-        </div>
-        <div class="card-body">
-            <div id="orgStructurePreview" class="org-structure-preview">
-                <p>Loading organization structure...</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Recent Activity -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Recent Activity</h3>
-        </div>
-        <div class="card-body">
-            <div id="recentActivityList" class="activity-list">
-                <p>Loading activity...</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Quick Actions -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Quick Actions</h3>
-        </div>
-        <div class="card-body">
-            <div class="quick-actions">
-                <a href="/organisations/create/" class="btn btn-primary">
-                    <i data-feather="plus-circle"></i> New Organization
-                </a>
-                <a href="/users/create/" class="btn btn-success">
-                    <i data-feather="user-plus"></i> Add User
-                </a>
-                <a href="/page_configs/view/" class="btn btn-info">
-                    <i data-feather="settings"></i> Configure UI
-                </a>
-                <a href="/permissions/" class="btn btn-warning">
-                    <i data-feather="shield"></i> Manage Permissions
-                </a>
+                <div class="user-info-grid">
+                    <div class="user-info-label">Name:</div>
+                    <div class="user-info-value">John Doe</div>
+                    
+                    <div class="user-info-label">Email:</div>
+                    <div class="user-info-value">john@example.com</div>
+                    
+                    <div class="user-info-label">Role:</div>
+                    <div class="user-info-value">Admin</div>
+                </div>
             </div>
         </div>
     </div>
@@ -110,212 +128,176 @@
         try {
             // Fetch dashboard data
             const response = await fetch('/dashboard/data/');
-            const data = await response.json();
-            
-            // Update metrics
-            document.getElementById('organizationCount').textContent = data.organizations_count || 0;
-            document.getElementById('userCount').textContent = data.users_count || 0;
-            document.getElementById('activityCount').textContent = data.activities_count || 0;
-            
-            // Update role breakdown
-            const roleBreakdown = document.getElementById('roleBreakdown');
-            if (data.role_counts) {
-                const roleItems = roleBreakdown.querySelectorAll('.role-item');
-                if (data.role_counts.admin) roleItems[0].querySelector('.role-count').textContent = data.role_counts.admin;
-                if (data.role_counts.manager) roleItems[1].querySelector('.role-count').textContent = data.role_counts.manager;
-                if (data.role_counts.user) roleItems[2].querySelector('.role-count').textContent = data.role_counts.user;
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Update counts
+                if (data.organizations_count) {
+                    document.getElementById('organizationCount').textContent = data.organizations_count;
+                }
+                
+                if (data.users_count) {
+                    document.getElementById('userCount').textContent = data.users_count;
+                }
+                
+                if (data.role_counts) {
+                    const roleCount = Object.values(data.role_counts).length;
+                    document.getElementById('roleCount').textContent = roleCount;
+                }
             }
-            
-            // Render organization preview
-            renderOrganizationPreview(data.organization_preview || []);
-            
-            // Render recent activity
-            renderRecentActivity(data.recent_activities || []);
         } catch (error) {
-            console.error('Error loading dashboard data:', error);
-            // Show sample data for demo purposes
-            document.getElementById('organizationCount').textContent = '1';
-            document.getElementById('userCount').textContent = '5';
-            document.getElementById('activityCount').textContent = '10';
-            
-            // Sample organization structure
-            renderOrganizationPreview([
-                { id: 1, name: 'Main Organization', children: [
-                    { id: 2, name: 'Department A' },
-                    { id: 3, name: 'Department B' }
-                ]}
-            ]);
-            
-            // Sample activity
-            renderRecentActivity([
-                { user: 'John Doe', action: 'Created organization', timestamp: new Date().toISOString() },
-                { user: 'Jane Smith', action: 'Added user', timestamp: new Date().toISOString() },
-                { user: 'Admin', action: 'Updated permissions', timestamp: new Date().toISOString() }
-            ]);
+            console.error('Error fetching dashboard data:', error);
         }
     });
-    
-    function renderOrganizationPreview(organizations) {
-        const container = document.getElementById('orgStructurePreview');
-        
-        if (!organizations || organizations.length === 0) {
-            container.innerHTML = '<p>No organizations found.</p>';
-            return;
-        }
-        
-        container.innerHTML = '';
-        
-        // Create a simple tree view
-        const renderNode = (node, level = 0) => {
-            const nodeEl = document.createElement('div');
-            nodeEl.className = 'org-node';
-            nodeEl.style.paddingLeft = `${level * 20}px`;
-            
-            nodeEl.innerHTML = `
-                <div class="org-node-content">
-                    <span class="org-node-name">${node.name}</span>
-                </div>
-            `;
-            
-            container.appendChild(nodeEl);
-            
-            // Render children
-            if (node.children && node.children.length > 0) {
-                node.children.forEach(child => renderNode(child, level + 1));
-            }
-        };
-        
-        organizations.forEach(org => renderNode(org));
-    }
-    
-    function renderRecentActivity(activities) {
-        const container = document.getElementById('recentActivityList');
-        
-        if (!activities || activities.length === 0) {
-            container.innerHTML = '<p>No recent activity.</p>';
-            return;
-        }
-        
-        container.innerHTML = '';
-        
-        activities.forEach(activity => {
-            const activityEl = document.createElement('div');
-            activityEl.className = 'activity-item';
-            
-            const timestamp = new Date(activity.timestamp);
-            const timeAgo = getTimeAgo(timestamp);
-            
-            activityEl.innerHTML = `
-                <div class="activity-icon">
-                    <i data-feather="activity"></i>
-                </div>
-                <div class="activity-content">
-                    <div class="activity-header">
-                        <span class="activity-user">${activity.user}</span>
-                        <span class="activity-time">${timeAgo}</span>
-                    </div>
-                    <div class="activity-description">${activity.action}</div>
-                </div>
-            `;
-            
-            container.appendChild(activityEl);
-        });
-        
-        // Initialize feather icons if available
-        if (typeof feather !== 'undefined') {
-            feather.replace();
-        }
-    }
-    
-    function getTimeAgo(date) {
-        const now = new Date();
-        const diffMs = now - date;
-        const diffSec = Math.floor(diffMs / 1000);
-        const diffMin = Math.floor(diffSec / 60);
-        const diffHour = Math.floor(diffMin / 60);
-        const diffDay = Math.floor(diffHour / 24);
-        
-        if (diffSec < 60) return 'just now';
-        if (diffMin < 60) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
-        if (diffHour < 24) return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;
-        return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
-    }
 </script>
 
 <style>
-    .dashboard-cards {
+    .dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: 1fr;
         gap: 20px;
-        margin-bottom: 20px;
     }
     
-    .role-breakdown {
-        margin-top: 10px;
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
     }
     
-    .role-item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
-    }
-    
-    .quick-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    
-    .org-structure-preview {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .org-node {
-        margin-bottom: 5px;
-    }
-    
-    .org-node-content {
+    .stats-card {
         display: flex;
         align-items: center;
-        padding: 5px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        padding: 20px;
     }
     
-    .activity-list {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    .activity-item {
+    .stats-icon {
         display: flex;
-        padding: 10px 0;
-        border-bottom: 1px solid #eee;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        margin-right: 20px;
+        color: white;
     }
     
-    .activity-icon {
-        margin-right: 10px;
-        color: var(--secondary-color);
+    .organizations-icon {
+        background-color: var(--primary-color);
     }
     
-    .activity-content {
+    .users-icon {
+        background-color: var(--success-color);
+    }
+    
+    .roles-icon {
+        background-color: var(--warning-color);
+    }
+    
+    .stats-content {
         flex: 1;
     }
     
-    .activity-header {
+    .stats-title {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--secondary-color);
+        margin: 0 0 5px 0;
+    }
+    
+    .stats-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 5px 0;
+    }
+    
+    .stats-description {
+        font-size: 0.875rem;
+        color: var(--secondary-color);
+        margin: 0 0 10px 0;
+    }
+    
+    .stats-link {
         display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
+        align-items: center;
+        font-size: 0.875rem;
+        color: var(--primary-color);
+        text-decoration: none;
     }
     
-    .activity-user {
-        font-weight: bold;
+    .stats-link i {
+        width: 16px;
+        height: 16px;
+        margin-left: 5px;
     }
     
-    .activity-time {
-        color: #777;
-        font-size: 0.8rem;
+    .feature-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+    }
+    
+    .feature-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background-color: #eff6ff;
+        color: var(--primary-color);
+        margin-right: 15px;
+    }
+    
+    .feature-content {
+        flex: 1;
+    }
+    
+    .feature-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+    }
+    
+    .feature-description {
+        font-size: 0.875rem;
+        color: var(--secondary-color);
+        margin: 0;
+    }
+    
+    .user-info-grid {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 10px;
+    }
+    
+    .user-info-label {
+        font-weight: 500;
+    }
+    
+    @media (min-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 2fr 1fr;
+            grid-template-areas: 
+                "stats stats"
+                "features user-info";
+        }
+        
+        .stats-cards {
+            grid-area: stats;
+        }
+        
+        .feature-cards {
+            grid-area: features;
+        }
+        
+        .user-info-card {
+            grid-area: user-info;
+        }
     }
 </style>
 {% endblock %}

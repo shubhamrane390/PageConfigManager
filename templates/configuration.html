@@ -1,0 +1,496 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuration - Access Control System{% endblock %}
+{% block header_title %}Configuration{% endblock %}
+
+{% block breadcrumb_items %}
+<div class="breadcrumb-item">
+    <a href="/" class="breadcrumb-link">Home</a>
+</div>
+<div class="breadcrumb-item">Configuration</div>
+{% endblock %}
+
+{% block page_title %}Configuration{% endblock %}
+{% block page_description %}Customize UI components, navigation, and system appearance{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div></div>
+    <div>
+        <button id="resetBtn" class="btn btn-secondary">Reset to Defaults</button>
+        <button id="saveConfigBtn" class="btn btn-primary">
+            <i data-feather="save" class="btn-icon"></i> Save Changes
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="tabs">
+            <button class="tab active" data-tab="navigation">Navigation</button>
+            <button class="tab" data-tab="appearance">Appearance</button>
+            <button class="tab" data-tab="layout">Layout</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Navigation Tab -->
+        <div class="tab-content active" id="navigation-tab">
+            <h3 class="mb-3">Navigation Configuration</h3>
+            <p class="mb-3">Customize the labels and sequence of navigation items</p>
+            
+            <div id="navigation-items">
+                <div class="navigation-item" data-id="configuration">
+                    <div class="handle">
+                        <i data-feather="menu"></i>
+                    </div>
+                    <div class="nav-details">
+                        <div class="nav-default">
+                            <span class="nav-label">Default Label</span>
+                            <span class="nav-value">Configuration</span>
+                        </div>
+                        <div class="nav-custom">
+                            <span class="nav-label">Custom Label</span>
+                            <input type="text" class="form-control custom-label-input" value="Configuration" data-original="Configuration">
+                        </div>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
+                            <i data-feather="arrow-up"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
+                            <i data-feather="arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="navigation-item" data-id="dashboard">
+                    <div class="handle">
+                        <i data-feather="menu"></i>
+                    </div>
+                    <div class="nav-details">
+                        <div class="nav-default">
+                            <span class="nav-label">Default Label</span>
+                            <span class="nav-value">Dashboard</span>
+                        </div>
+                        <div class="nav-custom">
+                            <span class="nav-label">Custom Label</span>
+                            <input type="text" class="form-control custom-label-input" value="Dashboard" data-original="Dashboard">
+                        </div>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
+                            <i data-feather="arrow-up"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
+                            <i data-feather="arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="navigation-item" data-id="organizations">
+                    <div class="handle">
+                        <i data-feather="menu"></i>
+                    </div>
+                    <div class="nav-details">
+                        <div class="nav-default">
+                            <span class="nav-label">Default Label</span>
+                            <span class="nav-value">Organizations</span>
+                        </div>
+                        <div class="nav-custom">
+                            <span class="nav-label">Custom Label</span>
+                            <input type="text" class="form-control custom-label-input" value="Organizations" data-original="Organizations">
+                        </div>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
+                            <i data-feather="arrow-up"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
+                            <i data-feather="arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="navigation-item" data-id="users">
+                    <div class="handle">
+                        <i data-feather="menu"></i>
+                    </div>
+                    <div class="nav-details">
+                        <div class="nav-default">
+                            <span class="nav-label">Default Label</span>
+                            <span class="nav-value">Users</span>
+                        </div>
+                        <div class="nav-custom">
+                            <span class="nav-label">Custom Label</span>
+                            <input type="text" class="form-control custom-label-input" value="Users" data-original="Users">
+                        </div>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
+                            <i data-feather="arrow-up"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
+                            <i data-feather="arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="navigation-item" data-id="permissions">
+                    <div class="handle">
+                        <i data-feather="menu"></i>
+                    </div>
+                    <div class="nav-details">
+                        <div class="nav-default">
+                            <span class="nav-label">Default Label</span>
+                            <span class="nav-value">Permissions</span>
+                        </div>
+                        <div class="nav-custom">
+                            <span class="nav-label">Custom Label</span>
+                            <input type="text" class="form-control custom-label-input" value="Permissions" data-original="Permissions">
+                        </div>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
+                            <i data-feather="arrow-up"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
+                            <i data-feather="arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation-preview mt-3">
+                <h4>Navigation Preview</h4>
+                <div class="sidebar-preview">
+                    <div class="sidebar-preview-header">Sidebar Navigation</div>
+                    <div id="preview-nav" class="sidebar-preview-items">
+                        <!-- Preview items will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Appearance Tab -->
+        <div class="tab-content" id="appearance-tab">
+            <h3 class="mb-3">Appearance Settings</h3>
+            <p class="mb-3">Customize the visual appearance of the application</p>
+            
+            <p>This tab will be implemented in a future update.</p>
+        </div>
+        
+        <!-- Layout Tab -->
+        <div class="tab-content" id="layout-tab">
+            <h3 class="mb-3">Layout Settings</h3>
+            <p class="mb-3">Customize the layout of components and pages</p>
+            
+            <p>This tab will be implemented in a future update.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let navigationItems = [];
+    
+    onDOMReady(() => {
+        // Initialize tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and tab contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                const tabId = tab.dataset.tab + '-tab';
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Initialize navigation items from current DOM state
+        navigationItems = Array.from(document.querySelectorAll('.navigation-item')).map(item => {
+            return {
+                id: item.dataset.id,
+                defaultLabel: item.querySelector('.nav-value').textContent,
+                customLabel: item.querySelector('.custom-label-input').value
+            };
+        });
+        
+        // Render the navigation preview
+        renderNavigationPreview();
+        
+        // Setup event listeners for move up/down buttons
+        document.querySelectorAll('.move-up-btn').forEach(btn => {
+            btn.addEventListener('click', handleMoveUp);
+        });
+        
+        document.querySelectorAll('.move-down-btn').forEach(btn => {
+            btn.addEventListener('click', handleMoveDown);
+        });
+        
+        // Setup event listeners for custom label inputs
+        document.querySelectorAll('.custom-label-input').forEach(input => {
+            input.addEventListener('input', updateNavigationPreview);
+        });
+        
+        // Setup save button
+        document.getElementById('saveConfigBtn').addEventListener('click', saveConfiguration);
+        
+        // Setup reset button
+        document.getElementById('resetBtn').addEventListener('click', resetConfiguration);
+        
+        // Initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    });
+    
+    function renderNavigationPreview() {
+        const previewNav = document.getElementById('preview-nav');
+        previewNav.innerHTML = '';
+        
+        // Get the current order and labels
+        const items = Array.from(document.querySelectorAll('.navigation-item')).map(item => {
+            return {
+                id: item.dataset.id,
+                label: item.querySelector('.custom-label-input').value
+            };
+        });
+        
+        // Create preview items
+        items.forEach(item => {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'sidebar-preview-item';
+            
+            let icon = '';
+            if (item.id === 'configuration') icon = 'settings';
+            else if (item.id === 'dashboard') icon = 'grid';
+            else if (item.id === 'organizations') icon = 'briefcase';
+            else if (item.id === 'users') icon = 'users';
+            else if (item.id === 'permissions') icon = 'shield';
+            
+            previewItem.innerHTML = `
+                <i data-feather="${icon}" class="sidebar-preview-icon"></i>
+                <span>${item.label}</span>
+            `;
+            
+            previewNav.appendChild(previewItem);
+        });
+        
+        // Re-initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+    
+    function handleMoveUp(event) {
+        const item = event.target.closest('.navigation-item');
+        const prevItem = item.previousElementSibling;
+        
+        if (prevItem) {
+            item.parentNode.insertBefore(item, prevItem);
+            updateNavigationPreview();
+        }
+    }
+    
+    function handleMoveDown(event) {
+        const item = event.target.closest('.navigation-item');
+        const nextItem = item.nextElementSibling;
+        
+        if (nextItem) {
+            item.parentNode.insertBefore(nextItem, item);
+            updateNavigationPreview();
+        }
+    }
+    
+    function updateNavigationPreview() {
+        renderNavigationPreview();
+        
+        // Update actual sidebar navigation
+        const sidebar = document.querySelector('.sidebar-nav');
+        if (sidebar) {
+            const items = Array.from(document.querySelectorAll('.navigation-item')).map(item => {
+                return {
+                    id: item.dataset.id,
+                    label: item.querySelector('.custom-label-input').value
+                };
+            });
+            
+            const sidebarItems = sidebar.querySelectorAll('.sidebar-nav-item');
+            items.forEach((item, index) => {
+                if (sidebarItems[index]) {
+                    const link = sidebarItems[index].querySelector('.sidebar-nav-link');
+                    const span = link.querySelector('span');
+                    if (span) {
+                        span.textContent = item.label;
+                    }
+                }
+            });
+        }
+    }
+    
+    async function saveConfiguration() {
+        // Get configuration data
+        const configData = {
+            navigation: Array.from(document.querySelectorAll('.navigation-item')).map((item, index) => {
+                return {
+                    id: item.dataset.id,
+                    order: index,
+                    defaultLabel: item.querySelector('.nav-value').textContent,
+                    customLabel: item.querySelector('.custom-label-input').value
+                };
+            })
+        };
+        
+        try {
+            // In a real implementation, you would save this to the server
+            // const response = await fetch('/configuration/save/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-CSRFToken': Helpers.getCsrfToken()
+            //     },
+            //     body: JSON.stringify(configData)
+            // });
+            
+            // For demo purposes, simulate success
+            console.log('Configuration saved:', configData);
+            
+            // Show success message
+            const container = document.querySelector('.card-body');
+            Helpers.showAlert('Configuration saved successfully', 'success', container);
+            
+            // Save to localStorage for demo persistence
+            localStorage.setItem('accessControlConfig', JSON.stringify(configData));
+        } catch (error) {
+            console.error('Error saving configuration:', error);
+            
+            // Show error message
+            const container = document.querySelector('.card-body');
+            Helpers.showAlert('Error saving configuration. Please try again.', 'danger', container);
+        }
+    }
+    
+    function resetConfiguration() {
+        // Reset custom labels to default values
+        document.querySelectorAll('.navigation-item').forEach(item => {
+            const input = item.querySelector('.custom-label-input');
+            input.value = input.dataset.original;
+        });
+        
+        // Reset order to default
+        const container = document.getElementById('navigation-items');
+        const items = Array.from(container.querySelectorAll('.navigation-item'));
+        
+        // Sort items by their IDs to restore default order
+        const defaultOrder = ['configuration', 'dashboard', 'organizations', 'users', 'permissions'];
+        items.sort((a, b) => {
+            return defaultOrder.indexOf(a.dataset.id) - defaultOrder.indexOf(b.dataset.id);
+        });
+        
+        // Clear container and re-append items in default order
+        container.innerHTML = '';
+        items.forEach(item => container.appendChild(item));
+        
+        // Update preview
+        updateNavigationPreview();
+        
+        // Show success message
+        const alertContainer = document.querySelector('.card-body');
+        Helpers.showAlert('Configuration reset to defaults', 'success', alertContainer);
+        
+        // Remove from localStorage
+        localStorage.removeItem('accessControlConfig');
+    }
+</script>
+
+<style>
+    .navigation-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+    
+    .handle {
+        cursor: move;
+        margin-right: 15px;
+        color: var(--secondary-color);
+    }
+    
+    .nav-details {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .nav-default, .nav-custom {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .nav-label {
+        font-size: 0.75rem;
+        color: var(--secondary-color);
+        margin-bottom: 5px;
+    }
+    
+    .nav-value {
+        font-weight: 500;
+    }
+    
+    .nav-actions {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .navigation-preview {
+        background-color: #f8fafc;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    
+    .sidebar-preview {
+        width: 240px;
+        background-color: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .sidebar-preview-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    
+    .sidebar-preview-items {
+        padding: 10px 0;
+    }
+    
+    .sidebar-preview-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 15px;
+        color: var(--secondary-color);
+    }
+    
+    .sidebar-preview-icon {
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+    }
+    
+    .sidebar-preview-item:hover {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color);
+    }
+</style>
+{% endblock %}

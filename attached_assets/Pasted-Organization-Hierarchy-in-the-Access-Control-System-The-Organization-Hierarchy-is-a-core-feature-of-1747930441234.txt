@@ -1,0 +1,41 @@
+Organization Hierarchy in the Access Control System
+
+The Organization Hierarchy is a core feature of the Access Control System, designed to represent the structure of your organization and its departments in a clear visual format.
+Current Implementation
+
+The Organization page shows a hierarchical tree structure that represents:
+
+    Organizational Units: Departments, divisions, teams, or any groupings within your company
+    Parent-Child Relationships: How organizations relate to each other (which department is under which division)
+    User Assignments: Which users belong to which parts of the organization
+
+Key Features
+Organization Structure View
+
+    Expandable/Collapsible Nodes: Each organization unit can be expanded or collapsed to show or hide its sub-organizations
+    Visual Hierarchy: Indentation and connecting lines clearly show the reporting structure
+    Organization Details: Each node shows the organization name and optional description
+    Action Buttons: Quick access to add, edit, or delete organizations
+
+User Hierarchy View
+
+    Toggle between views: Switch between organization structure view and user hierarchy view
+    Position-Based Structure: Shows positions within each organization and their reporting relationships
+    Vacant Positions: Clearly marks positions that don't have assigned users
+    User Assignment: Ability to assign users to positions through a modal dialog
+
+Management Features
+
+    Add Organizations: Create new organizations at any level of the hierarchy
+    Edit Organizations: Modify existing organization details
+    Delete Organizations: Remove organizations (with safeguards against deleting non-empty units)
+    Drag-and-Drop: Some implementations offer drag-and-drop reorganization capabilities
+
+Technical Implementation
+
+The hierarchy is implemented using:
+
+    Tree Components: Recursive components that render parent-child relationships
+    Collapsible Sections: JavaScript-powered expand/collapse functionality
+    API Integration: Backend endpoints for CRUD operations on organizations
+    State Management: Maintaining the expanded/collapsed state of tree nodes
