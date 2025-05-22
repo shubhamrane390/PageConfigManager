@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Organization - Access Control System{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Create New Organization</h2>
+    </div>
+    <div class="card-body">
+        <form id="createOrganizationForm">
+            <div class="form-group">
+                <label for="name">Organization Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="parent_organization">Parent Organization (Optional)</label>
+                <select id="parent_organization" name="parent_organization">
+                    <option value="">None</option>
+                    <!-- Options will be loaded dynamically -->
+                </select>
+            </div>
+            
+            <div class="form-group text-right">
+                <a href="/organizations/" class="btn btn-danger">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Organization</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Load parent organizations
+    onDOMReady(async () => {
+        try {
+            const select = document.getElementById('parent_organization');
+            
+            // Show loading state
+            select.innerHTML = '<option value="">Loading organizations...</option>';
+            select.disabled = true;
+            
+            const response = await fetch('/organizations/list/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': Helpers.getCsrfToken()
+                },
+                credentials: 'same-origin'
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to load organizations');
+            }
+            
+            const organizations = await response.json();
+            
+            // Reset select
+            select.innerHTML = '<option value="">None</option>';
+            
+            // Add options
+            organizations.forEach(org => {
+                const option = document.createElement('option');
+                option.value = org.id;
+                option.textContent = org.name;
+                select.appendChild(option);
+            });
+            
+            select.disabled = false;
+        } catch (error) {
+            console.error('Error loading organizations:', error);
+            const select = document.getElementById('parent_organization');
+            select.innerHTML = '<option value="">Error loading organizations</option>';
+            select.disabled = true;
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/organization.js"></script>
+{% endblock %}

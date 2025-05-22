@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Configurations - Access Control System{% endblock %}
+
+{% block content %}
+<div id="pageConfigContainer">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Page Configurations</h2>
+                <div>
+                    <button class="btn btn-success" id="bulkUploadBtn">
+                        <i data-feather="upload"></i> Bulk Upload
+                    </button>
+                    <button class="btn btn-primary" id="addPageConfigBtn">
+                        <i data-feather="plus"></i> Add Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">
+                Page configurations allow you to customize UI elements across different pages. 
+                Define custom names, visibility, and display order for each component.
+            </p>
+            
+            <div id="pageConfigTableContainer">
+                <p>Loading page configurations...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/page_config.js"></script>
+{% endblock %}

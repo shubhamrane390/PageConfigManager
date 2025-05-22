@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Organization Details - Access Control System{% endblock %}
+
+{% block content %}
+<div id="organizationDetail" data-organization-id="{{ organization_id }}">
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Organization Details</h2>
+                <div>
+                    <a href="/map_org_pages/{{ organization_id }}/" class="btn btn-primary">
+                        <i data-feather="settings"></i> Configure Pages
+                    </a>
+                    <a href="/organizations/edit/{{ organization_id }}/" class="btn btn-warning">
+                        <i data-feather="edit"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" id="orgDetailsContainer">
+            <div class="mb-3">
+                <strong>Name:</strong> <span class="org-name">Loading...</span>
+            </div>
+            <div class="mb-3">
+                <strong>Description:</strong> <span class="org-description">Loading...</span>
+            </div>
+            <div class="mb-3">
+                <strong>Parent Organization:</strong> <span class="org-parent">Loading...</span>
+            </div>
+            <div class="mb-3">
+                <strong>Created:</strong> <span class="org-created">Loading...</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Members</h2>
+                <button class="btn btn-primary" id="addMemberBtn">
+                    <i data-feather="user-plus"></i> Add Member
+                </button>
+            </div>
+        </div>
+        <div class="card-body" id="orgMembersContainer">
+            <p>Loading members...</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Organization Hierarchy</h2>
+        </div>
+        <div class="card-body" id="orgHierarchyContainer">
+            <p>Loading hierarchy...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/organization.js"></script>
+{% endblock %}

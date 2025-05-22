@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Map Page Configurations - Access Control System{% endblock %}
+
+{% block content %}
+<div id="mappingContainer" data-organization-id="{{ organization_id }}">
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Map Page Configurations for: <span id="orgName">Loading...</span></h2>
+                <button class="btn btn-primary" id="saveMappingsBtn" disabled>
+                    <i data-feather="save"></i> Save Mappings
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">
+                Customize how UI components appear for this organization. You can rename components and 
+                control their visibility. Changes made here will only affect this organization.
+            </p>
+            
+            <div id="mappingsTableContainer">
+                <p>Loading page configurations...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/mapping.js"></script>
+{% endblock %}
