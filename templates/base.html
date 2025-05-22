@@ -5,6 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Access Control System{% endblock %}</title>
     
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
     
@@ -12,62 +45,128 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     
     {% block extra_css %}{% endblock %}
+    
+    <style>
+        /* Additional modern styling that works with Tailwind */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        
+        .card {
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn {
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav-link.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+            font-weight: 500;
+        }
+        
+        /* Code example styling */
+        .code-example {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background-color: #f1f5f9;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .code-block {
+            padding: 1rem;
+            margin: 0;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            color: #334155;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i data-feather="shield"></i>
+        <aside class="sidebar shadow-lg bg-white">
+            <div class="sidebar-header flex items-center justify-between p-4 h-16 border-b border-gray-200">
+                <div class="logo flex items-center text-primary-600 font-bold text-lg">
+                    <i data-feather="shield" class="mr-2"></i>
                     <span>Access Control</span>
                 </div>
-                <button class="sidebar-toggle">
+                <button class="sidebar-toggle p-1 rounded-md hover:bg-gray-100 focus:outline-none">
                     <i data-feather="menu"></i>
                 </button>
             </div>
             
-            <nav class="sidebar-nav">
-                <a href="/" class="sidebar-nav-link" data-page="dashboard">
-                    <i data-feather="grid" class="sidebar-nav-icon"></i>
+            <nav class="sidebar-nav py-4">
+                <div class="px-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Main
+                </div>
+                <a href="/" class="sidebar-nav-link group flex items-center px-4 py-2 text-gray-600 hover:bg-primary-50 hover:text-primary-600" data-page="dashboard">
+                    <i data-feather="grid" class="sidebar-nav-icon w-5 h-5 mr-3"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="/organisations/" class="sidebar-nav-link" data-page="organisations">
-                    <i data-feather="briefcase" class="sidebar-nav-icon"></i>
+                
+                <div class="px-4 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Organization
+                </div>
+                <a href="/organisations/" class="sidebar-nav-link group flex items-center px-4 py-2 text-gray-600 hover:bg-primary-50 hover:text-primary-600" data-page="organisations">
+                    <i data-feather="briefcase" class="sidebar-nav-icon w-5 h-5 mr-3"></i>
                     <span>Organizations</span>
                 </a>
-                <a href="/location_hierarchy/" class="sidebar-nav-link" data-page="location_hierarchy">
-                    <i data-feather="map-pin" class="sidebar-nav-icon"></i>
+                <a href="/location_hierarchy/" class="sidebar-nav-link group flex items-center px-4 py-2 text-gray-600 hover:bg-primary-50 hover:text-primary-600" data-page="location_hierarchy">
+                    <i data-feather="map-pin" class="sidebar-nav-icon w-5 h-5 mr-3"></i>
                     <span>Location Hierarchy</span>
                 </a>
-                <a href="/users/" class="sidebar-nav-link" data-page="users">
-                    <i data-feather="users" class="sidebar-nav-icon"></i>
+                
+                <div class="px-4 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    User Management
+                </div>
+                <a href="/users/" class="sidebar-nav-link group flex items-center px-4 py-2 text-gray-600 hover:bg-primary-50 hover:text-primary-600" data-page="users">
+                    <i data-feather="users" class="sidebar-nav-icon w-5 h-5 mr-3"></i>
                     <span>Users</span>
                 </a>
-                <a href="/permissions/" class="sidebar-nav-link" data-page="permissions">
-                    <i data-feather="shield" class="sidebar-nav-icon"></i>
+                <a href="/permissions/" class="sidebar-nav-link group flex items-center px-4 py-2 text-gray-600 hover:bg-primary-50 hover:text-primary-600" data-page="permissions">
+                    <i data-feather="shield" class="sidebar-nav-icon w-5 h-5 mr-3"></i>
                     <span>Permissions</span>
                 </a>
-                <a href="/configuration/" class="sidebar-nav-link" data-page="configuration">
-                    <i data-feather="settings" class="sidebar-nav-icon"></i>
+                
+                <div class="px-4 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Settings
+                </div>
+                <a href="/configuration/" class="sidebar-nav-link group flex items-center px-4 py-2 text-gray-600 hover:bg-primary-50 hover:text-primary-600" data-page="configuration">
+                    <i data-feather="settings" class="sidebar-nav-icon w-5 h-5 mr-3"></i>
                     <span>Configuration</span>
                 </a>
             </nav>
             
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <div class="user-avatar">JD</div>
-                    <div class="user-details">
-                        <div class="user-name">John Doe</div>
-                        <div class="user-role">Administrator</div>
+            <div class="sidebar-footer mt-auto border-t border-gray-200 p-4">
+                <div class="user-info flex items-center mb-3">
+                    <div class="user-avatar bg-primary-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-semibold">JD</div>
+                    <div class="user-details ml-3">
+                        <div class="user-name font-medium">John Doe</div>
+                        <div class="user-role text-xs text-gray-500">Administrator</div>
                     </div>
                 </div>
-                <div class="user-actions">
-                    <button class="btn-icon" title="Settings">
-                        <i data-feather="settings"></i>
+                <div class="user-actions flex gap-2">
+                    <button class="btn-icon bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center text-gray-600" title="Settings">
+                        <i data-feather="settings" class="w-4 h-4"></i>
                     </button>
-                    <button class="btn-icon" title="Logout">
-                        <i data-feather="log-out"></i>
+                    <button class="btn-icon bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center text-gray-600" title="Logout">
+                        <i data-feather="log-out" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
@@ -76,45 +175,53 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
-            <header class="header">
+            <header class="header bg-white shadow-sm flex items-center justify-between h-16 px-6">
                 <div class="header-content">
-                    <h1 class="header-title">{% block header_title %}Dashboard{% endblock %}</h1>
-                    <div class="breadcrumb">
+                    <h1 class="header-title text-lg font-semibold text-gray-800">{% block header_title %}Dashboard{% endblock %}</h1>
+                    <div class="breadcrumb flex items-center text-xs text-gray-500">
                         {% block breadcrumb_items %}
                         <div class="breadcrumb-item">
-                            <a href="/" class="breadcrumb-link">Home</a>
+                            <a href="/" class="breadcrumb-link text-primary-600 hover:text-primary-700">Home</a>
                         </div>
-                        <div class="breadcrumb-item">Dashboard</div>
+                        <div class="breadcrumb-item flex items-center">
+                            <svg class="h-3 w-3 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                            Dashboard
+                        </div>
                         {% endblock %}
                     </div>
                 </div>
-                <div class="header-actions">
-                    <button class="btn-icon" title="Notifications">
-                        <i data-feather="bell"></i>
-                    </button>
-                    <button class="btn-icon" title="Help">
-                        <i data-feather="help-circle"></i>
+                <div class="header-actions flex space-x-3">
+                    <div class="relative">
+                        <button class="btn-icon bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center text-gray-600 relative" title="Notifications">
+                            <i data-feather="bell" class="w-5 h-5"></i>
+                            <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                        </button>
+                    </div>
+                    <button class="btn-icon bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded-full flex items-center justify-center text-gray-600" title="Help">
+                        <i data-feather="help-circle" class="w-5 h-5"></i>
                     </button>
                 </div>
             </header>
             
             <!-- Page Content -->
-            <div class="page-content">
-                <div class="page-header">
+            <div class="page-content bg-gray-50 p-6 overflow-y-auto">
+                <div class="page-header mb-6">
                     <div class="page-title-section">
-                        <h2 class="page-title">{% block page_title %}Dashboard{% endblock %}</h2>
-                        <p class="page-description">{% block page_description %}Overview of your system{% endblock %}</p>
+                        <h2 class="page-title text-2xl font-bold text-gray-900">{% block page_title %}Dashboard{% endblock %}</h2>
+                        <p class="page-description text-gray-600 mt-1">{% block page_description %}Overview of your system{% endblock %}</p>
                     </div>
                 </div>
                 
-                <div class="content-container">
+                <div class="content-container max-w-7xl mx-auto">
                     {% block content %}{% endblock %}
                 </div>
             </div>
         </main>
     </div>
     
-    <!-- Modal Container -->
+    <!-- Modal Container - Tailwind-styled modals will be added here -->
     <div class="modal-container"></div>
     
     <!-- Common JavaScript -->
@@ -135,9 +242,9 @@
             const currentPath = window.location.pathname;
             document.querySelectorAll('.sidebar-nav-link').forEach(link => {
                 if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
+                    link.classList.add('active', 'bg-primary-50', 'text-primary-600', 'border-l-4', 'border-primary-500', 'pl-[calc(1rem-4px)]');
                 } else if (currentPath !== '/' && link.getAttribute('href') !== '/' && currentPath.includes(link.getAttribute('href'))) {
-                    link.classList.add('active');
+                    link.classList.add('active', 'bg-primary-50', 'text-primary-600', 'border-l-4', 'border-primary-500', 'pl-[calc(1rem-4px)]');
                 }
             });
         });

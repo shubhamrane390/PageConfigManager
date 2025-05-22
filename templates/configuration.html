@@ -6,17 +6,29 @@
 {% block content %}
 <div class="content-wrapper">
     <div class="header-actions">
-        <h2 class="content-title">Configuration</h2>
+        <h2 class="content-title">End-User Website Configuration</h2>
         <div>
             <button id="resetBtn" class="btn btn-outline-secondary">Reset to Defaults</button>
             <button id="saveConfigBtn" class="btn btn-primary">
-                <i data-feather="save"></i> Save Changes
+                <i data-feather="save"></i> Save to Database
             </button>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
+            <div class="alert alert-info mb-0">
+                <div class="alert-content">
+                    <div class="alert-icon">
+                        <i data-feather="info"></i>
+                    </div>
+                    <div class="alert-message">
+                        <strong>Note:</strong> These configuration settings will be applied to your end-users' website, not the admin interface you're currently using.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-header mt-3">
             <ul class="nav-tabs">
                 <li class="nav-item">
                     <button class="nav-link active" data-tab="navigation">Navigation</button>
@@ -33,8 +45,8 @@
             <!-- Navigation Tab -->
             <div class="tab-content active" id="navigation-tab">
                 <div class="section-header">
-                    <h3>Navigation Configuration</h3>
-                    <p>Customize the labels and sequence of navigation items in the sidebar</p>
+                    <h3>End-User Navigation Configuration</h3>
+                    <p>Customize the labels and sequence of navigation items in the end-user website</p>
                 </div>
 
                 <div id="navigationItems" class="sortable-list">
@@ -237,9 +249,6 @@
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
-        
-        // Apply changes to actual sidebar (for demo)
-        updateActualSidebar();
     }
     
     // Update the navigation preview when custom labels change
@@ -256,6 +265,29 @@
         });
         
         renderNavigationPreview();
+        
+        // Show user feedback about changes that would be saved
+        const container = document.querySelector('.card-body');
+        const existingNote = container.querySelector('.config-note');
+        if (existingNote) {
+            existingNote.remove();
+        }
+        
+        const note = document.createElement('div');
+        note.className = 'alert alert-success config-note mt-3';
+        note.innerHTML = `
+            <div class="alert-content">
+                <div class="alert-icon">
+                    <i data-feather="check-circle"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Preview updated!</strong> These changes will be saved to the database and applied to the end-user website when you click "Save to Database".
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('navigation-tab').appendChild(note);
+        feather.replace();
     }
     
     // Move an item up in the list
@@ -439,11 +471,11 @@
         });
     }
     
-    // Save the configuration
+    // Save the configuration to database for end-user websites
     function saveConfiguration() {
         try {
-            // In a real application, this would be an API call
-            // const response = await fetch('/api/configuration/navigation', {
+            // In a real application, this would be an API call to the backend
+            // const response = await fetch('/api/end-user-configuration/navigation', {
             //     method: 'POST',
             //     headers: {
             //         'Content-Type': 'application/json',
@@ -452,18 +484,50 @@
             //     body: JSON.stringify(navItems)
             // });
             
-            // For demo purposes, save to localStorage
-            localStorage.setItem('navConfig', JSON.stringify(navItems));
+            // For demo purposes, save to localStorage (simulating database)
+            localStorage.setItem('endUserNavConfig', JSON.stringify(navItems));
+            
+            // Log what would be sent to the database
+            console.log('Saving to database for end-user websites:', navItems);
             
             // Show success message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert('Configuration saved successfully. Navigation has been updated.', 'success', container);
+            Helpers.showAlert('Configuration saved successfully to database. These settings will be applied to end-user websites.', 'success', container);
+            
+            // Show example API call that would be made in a real implementation
+            const apiCallExample = document.createElement('div');
+            apiCallExample.className = 'code-example mt-3';
+            apiCallExample.innerHTML = `
+                <div class="code-header">
+                    <strong>Example API Call (For Frontend Integration)</strong>
+                </div>
+                <pre class="code-block">
+fetch('/api/end-user-configuration/navigation', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+    },
+    body: JSON.stringify(${JSON.stringify(navItems, null, 2)})
+});
+                </pre>
+            `;
+            
+            // Remove existing example if present
+            const existingExample = document.querySelector('.code-example');
+            if (existingExample) {
+                existingExample.remove();
+            }
+            
+            // Add example to the page
+            document.getElementById('navigation-tab').appendChild(apiCallExample);
+            
         } catch (error) {
             console.error('Error saving configuration:', error);
             
             // Show error message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert('Failed to save configuration. Please try again.', 'danger', container);
+            Helpers.showAlert('Failed to save configuration to database. Please try again.', 'danger', container);
         }
     }
     
