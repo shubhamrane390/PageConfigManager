@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+
+{% block title %}Permissions - Access Control System{% endblock %}
+{% block header_title %}Permissions{% endblock %}
+
+{% block breadcrumb_items %}
+<div class="breadcrumb-item">
+    <a href="/" class="breadcrumb-link">Home</a>
+</div>
+<div class="breadcrumb-item">Permissions</div>
+{% endblock %}
+
+{% block page_title %}Roles & Permissions{% endblock %}
+{% block page_description %}Define what actions different roles can perform{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Permission Management</h3>
+        <p class="text-muted">Configure which permissions are assigned to each role</p>
+    </div>
+    <div class="card-body">
+        <div class="tabs">
+            <button class="tab active" data-role="admin">Admin</button>
+            <button class="tab" data-role="manager">Manager</button>
+            <button class="tab" data-role="user">User</button>
+            <button class="tab" data-role="guest">Guest</button>
+        </div>
+        
+        <div class="permission-container">
+            <!-- Admin Tab Content -->
+            <div class="permission-content active" id="admin-permissions">
+                <div class="role-description">
+                    <h3>Admin</h3>
+                    <p>Full access to all resources</p>
+                </div>
+                
+                <div class="permission-sections">
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="dashboard-permissions">
+                            <span>Dashboard Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="dashboard-permissions">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> View dashboard
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> View statistics
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Download reports
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="users-permissions">
+                            <span>Users Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="users-permissions">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> View users
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Create users
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Edit users
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Delete users
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="organization-permissions">
+                            <span>Organization Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="organization-permissions">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> View organizations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Create organizations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Edit organizations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Delete organizations
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="system-permissions">
+                            <span>System Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="system-permissions">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Manage system settings
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Manage page configurations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> Manage permissions
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked disabled> View audit logs
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Manager Tab Content (initially hidden) -->
+            <div class="permission-content" id="manager-permissions">
+                <div class="role-description">
+                    <h3>Manager</h3>
+                    <p>Access to manage teams and view organization data</p>
+                </div>
+                
+                <div class="permission-sections">
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="dashboard-permissions-manager">
+                            <span>Dashboard Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="dashboard-permissions-manager">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> View dashboard
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> View statistics
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> Download reports
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="users-permissions-manager">
+                            <span>Users Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="users-permissions-manager">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> View users
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> Create users
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> Edit users
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Delete users
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="organization-permissions-manager">
+                            <span>Organization Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="organization-permissions-manager">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> View organizations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Create organizations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> Edit organizations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Delete organizations
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="system-permissions-manager">
+                            <span>System Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="system-permissions-manager">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Manage system settings
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Manage page configurations
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Manage permissions
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> View audit logs
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Tab Content (initially hidden) -->
+            <div class="permission-content" id="user-permissions">
+                <div class="role-description">
+                    <h3>User</h3>
+                    <p>Standard access to organization resources</p>
+                </div>
+                
+                <div class="permission-sections">
+                    <!-- Similar structure to manager, but with different permissions checked -->
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="dashboard-permissions-user">
+                            <span>Dashboard Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="dashboard-permissions-user">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> View dashboard
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> View statistics
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Download reports
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Other permission sections for user role -->
+                </div>
+            </div>
+            
+            <!-- Guest Tab Content (initially hidden) -->
+            <div class="permission-content" id="guest-permissions">
+                <div class="role-description">
+                    <h3>Guest</h3>
+                    <p>Limited view-only access</p>
+                </div>
+                
+                <div class="permission-sections">
+                    <!-- Similar structure to manager, but with very limited permissions checked -->
+                    <div class="permission-section">
+                        <div class="permission-section-header" data-toggle="dashboard-permissions-guest">
+                            <span>Dashboard Permissions</span>
+                            <i data-feather="chevron-down"></i>
+                        </div>
+                        <div class="permission-section-content" id="dashboard-permissions-guest">
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> View dashboard
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> View statistics
+                                </label>
+                            </div>
+                            <div class="permission-item">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Download reports
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Other permission sections for guest role -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button id="savePermissionsBtn" class="btn btn-primary">Save Permissions</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    onDOMReady(() => {
+        // Initialize tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all permission content
+                document.querySelectorAll('.permission-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show selected role permissions
+                const role = tab.dataset.role;
+                document.getElementById(`${role}-permissions`).classList.add('active');
+            });
+        });
+        
+        // Initialize permission section toggles
+        document.querySelectorAll('.permission-section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const targetId = header.dataset.toggle;
+                const content = document.getElementById(targetId);
+                
+                if (content.style.display === 'none') {
+                    content.style.display = 'block';
+                    header.querySelector('i').setAttribute('data-feather', 'chevron-down');
+                } else {
+                    content.style.display = 'none';
+                    header.querySelector('i').setAttribute('data-feather', 'chevron-right');
+                }
+                
+                // Re-initialize feather icons
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            });
+        });
+        
+        // Save permissions button
+        document.getElementById('savePermissionsBtn').addEventListener('click', () => {
+            // In a real implementation, you would collect all checkbox states and save to the server
+            
+            // For demo purposes, show success message
+            const container = document.querySelector('.card-body');
+            Helpers.showAlert('Permissions saved successfully', 'success', container);
+        });
+        
+        // Initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    });
+</script>
+
+<style>
+    .tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 20px;
+    }
+    
+    .tab {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        font-weight: 500;
+        color: var(--secondary-color);
+        cursor: pointer;
+    }
+    
+    .tab.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
+    
+    .permission-content {
+        display: none;
+    }
+    
+    .permission-content.active {
+        display: block;
+    }
+    
+    .role-description {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .permission-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .permission-section {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .permission-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        background-color: #f8fafc;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    
+    .permission-section-content {
+        padding: 15px;
+    }
+    
+    .permission-item {
+        margin-bottom: 10px;
+    }
+    
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    
+    .checkbox-label input {
+        margin-right: 10px;
+    }
+    
+    .form-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+</style>
+{% endblock %}
