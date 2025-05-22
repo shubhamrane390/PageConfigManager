@@ -1,0 +1,128 @@
+## Pages Required:
+
+1. **Dashboard** - Main overview page with key metrics
+   - User counts by role
+   - Organization structure summary
+   - Recent activity logs
+
+2. **Organization Management**
+   - Organization hierarchy tree with expand/collapse functionality
+   - User hierarchy view showing reporting lines
+   - Add/Edit/Delete organization functionality with modal forms
+   - Visual indicators for organization relationships
+
+3. **User Management**
+   - User listing with search and filter capabilities
+   - User details with role assignments
+   - Add/Edit/Delete user functionality with modal forms
+   - User-to-organization assignment interface
+
+4. **Permissions Management**
+   - Role-based permission matrix
+   - Permission assignment interface
+   - Visual indicators for permission levels
+
+5. **Configuration Page**
+   - UI customization options (navigation, appearance, layout)
+   - Tab-based interface for different configuration sections
+   - Preview functionality for configuration changes
+
+## UI/UX Requirements:
+
+1. **Visual Design**
+   - Use Tailwind CSS for styling (identical to the Vite app)
+   - Clean, modern interface with consistent spacing
+   - Responsive design that works on all screen sizes
+   - Light/dark mode toggle functionality
+
+2. **Interactive Elements**
+   - Expandable/collapsible tree structures
+   - Modal dialogs for forms and confirmations
+   - Toast notifications for user feedback
+   - Drag-and-drop functionality for organization structure
+   - Tab interfaces for content organization
+
+3. **Forms and Validation**
+   - Inline form validation
+   - Error messaging system
+   - Form field auto-completion where applicable
+   - Multi-step forms for complex processes
+
+4. **Navigation**
+   - Sidebar navigation with collapsible sections
+   - Breadcrumb navigation for deep-nested pages
+   - User menu with quick access to common functions
+
+5. **Data Visualization**
+   - Organization charts with visual relationships
+   - Permission matrices with color-coding
+   - User activity timelines
+
+## Technical Requirements:
+
+1. **Backend**
+   - Django views for rendering templates
+   - Django REST Framework for API endpoints
+   - Alternative Node.js Express API option
+
+2. **API Endpoints**
+   - Complete CRUD operations for Users, Organizations, Roles, and Positions
+   - Proper HTTP methods (GET, POST, PUT, DELETE)
+   - Consistent response format
+
+3. **Templates**
+   - Django templates with Tailwind CSS
+   - JavaScript for interactive elements
+   - Reusable template components
+
+4. **Data Handling**
+   - Dummy data for testing
+   - Mock API responses for frontend development
+
+Please generate the complete Django application with all necessary files, views, templates, and JavaScript to make this work correctly. Make it visually and functionally identical to the Vite React app.
+
+Description of Key Page Requirements
+1. Dashboard
+
+The dashboard should provide an at-a-glance overview of the system with:
+
+    Summary cards showing key metrics like total users and organizations
+    A simplified organization chart preview
+    Recent activity logs or notifications
+    Quick access buttons to common tasks
+
+2. Organization Management
+
+This page should have two main views toggled by buttons at the top:
+
+    Organization Structure: A hierarchical tree view of organizations with parent-child relationships
+    User Hierarchy: A view showing the reporting structure of users within organizations
+
+Both views should allow for expanding/collapsing sections, and have actions for adding, editing, and deleting items. Modal dialogs should handle all forms.
+3. User Management
+
+This should include:
+
+    A responsive table listing all users with sortable columns
+    Search and filter functionality
+    Role badges showing each user's assigned role
+    Action buttons for edit and delete operations
+    A modal form for adding/editing users with role and organization selection
+
+4. Permissions Management
+
+This page should feature:
+
+    A tab interface to switch between different roles
+    A matrix showing permissions for each resource/action
+    Toggle controls for enabling/disabling permissions
+    Visual indicators showing inherited vs. explicitly assigned permissions
+
+5. Configuration Page
+
+This should include:
+
+    A tab navigation system for different configuration areas
+    Form controls for customizing UI elements
+    Live preview of configuration changes
+    Options for navigation order, appearance settings, and layout preferences

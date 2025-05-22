@@ -22,10 +22,11 @@
     <nav>
         <div class="container">
             <ul class="navbar" id="customNavbar">
-                <li><a href="/dashboard/">Dashboard</a></li>
-                <li><a href="/organizations/">Organizations</a></li>
-                <li><a href="/page_configs/">Page Configurations</a></li>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/organisations/">Organizations</a></li>
+                <li><a href="/page_configs/view/">Configurations</a></li>
                 <li><a href="/users/">Users</a></li>
+                <li><a href="/permissions/">Permissions</a></li>
             </ul>
         </div>
     </nav>
@@ -38,20 +39,84 @@
     
     <footer>
         <div class="container text-center">
-            <p>&copy; 2023 Access Control System</p>
+            <p>&copy; 2025 Access Control System</p>
         </div>
     </footer>
     
-    <script src="/static/js/common.js"></script>
-    {% block extra_js %}{% endblock %}
-    
     <script>
+        // DOM ready function
+        function onDOMReady(callback) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', callback);
+            } else {
+                callback();
+            }
+        }
+
+        // Common utility functions
+        const Helpers = {
+            showAlert: function(message, type = 'success', container) {
+                const alertElement = document.createElement('div');
+                alertElement.className = `alert alert-${type}`;
+                alertElement.textContent = message;
+                
+                // Add a close button
+                const closeButton = document.createElement('button');
+                closeButton.innerHTML = '&times;';
+                closeButton.className = 'close';
+                closeButton.style.float = 'right';
+                closeButton.style.border = 'none';
+                closeButton.style.background = 'none';
+                closeButton.style.fontSize = '1.25rem';
+                closeButton.style.cursor = 'pointer';
+                closeButton.onclick = function() {
+                    alertElement.remove();
+                };
+                
+                alertElement.prepend(closeButton);
+                
+                // Auto-remove after 5 seconds for success messages
+                if (type === 'success') {
+                    setTimeout(() => {
+                        alertElement.remove();
+                    }, 5000);
+                }
+                
+                // Insert at the top of the container
+                container.prepend(alertElement);
+            },
+            
+            getCsrfToken: function() {
+                return document.cookie.split('; ')
+                    .find(row => row.startsWith('csrftoken='))
+                    ?.split('=')[1] || '';
+            },
+            
+            formatDate: function(dateString) {
+                if (!dateString) return 'N/A';
+                const date = new Date(dateString);
+                return date.toLocaleDateString();
+            }
+        };
+        
         // Initialize icons
-        document.addEventListener('DOMContentLoaded', () => {
+        onDOMReady(() => {
             if(typeof feather !== 'undefined') {
                 feather.replace();
             }
+            
+            // Add active class to current nav item
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.navbar a').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath.includes(link.getAttribute('href')) && link.getAttribute('href') !== '/') {
+                    link.classList.add('active');
+                }
+            });
         });
     </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

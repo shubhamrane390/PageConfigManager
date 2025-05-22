@@ -1,0 +1,546 @@
+{% extends 'base.html' %}
+
+{% block title %}Organizations - Access Control System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .org-tree {
+        margin-top: 20px;
+    }
+    
+    .org-node {
+        margin-bottom: 10px;
+    }
+    
+    .org-node-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+    }
+    
+    .org-node-name {
+        font-weight: bold;
+    }
+    
+    .org-node-actions {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .org-children {
+        margin-left: 30px;
+        padding-left: 10px;
+        border-left: 2px solid #ddd;
+    }
+    
+    .view-toggle {
+        margin-bottom: 20px;
+    }
+    
+    .view-toggle .btn-group {
+        display: flex;
+        gap: 0;
+    }
+    
+    .view-toggle .btn {
+        border-radius: 0;
+    }
+    
+    .view-toggle .btn:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+    
+    .view-toggle .btn:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .user-hierarchy {
+        display: none;
+    }
+    
+    .search-filter {
+        margin-bottom: 20px;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+    
+    .modal-content {
+        position: relative;
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 600px;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    
+    .hidden {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="card-title">Organizations</h2>
+            <button id="addOrgBtn" class="btn btn-primary">
+                <i data-feather="plus"></i> Add Organization
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- View toggle -->
+        <div class="view-toggle">
+            <div class="btn-group">
+                <button id="structureViewBtn" class="btn btn-primary active">Organization Structure</button>
+                <button id="userViewBtn" class="btn btn-outline-primary">User Hierarchy</button>
+            </div>
+        </div>
+        
+        <!-- Search and filter -->
+        <div class="search-filter">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search organizations...">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                        <i data-feather="search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Organization structure view -->
+        <div id="organizationStructure" class="org-tree">
+            <p>Loading organizations...</p>
+        </div>
+        
+        <!-- User hierarchy view (hidden by default) -->
+        <div id="userHierarchy" class="user-hierarchy">
+            <p>Loading user hierarchy...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Organization Modal -->
+<div id="orgModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3 id="modalTitle">Add Organization</h3>
+        
+        <form id="organizationForm">
+            <input type="hidden" id="orgId" value="">
+            
+            <div class="form-group">
+                <label for="orgName">Organization Name:</label>
+                <input type="text" id="orgName" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="parentOrg">Parent Organization:</label>
+                <select id="parentOrg" class="form-control">
+                    <option value="">-- None (Top Level) --</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="orgLogo">Logo (optional):</label>
+                <input type="file" id="orgLogo" class="form-control-file">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3>Confirm Delete</h3>
+        
+        <p>Are you sure you want to delete this organization? This action cannot be undone.</p>
+        
+        <div class="form-actions">
+            <button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+            <button class="btn btn-secondary cancel-btn">Cancel</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let organizations = [];
+    let currentOrgId = null;
+    
+    onDOMReady(async () => {
+        // Initialize the page
+        await loadOrganizations();
+        
+        // Set up event listeners
+        document.getElementById('structureViewBtn').addEventListener('click', showStructureView);
+        document.getElementById('userViewBtn').addEventListener('click', showUserView);
+        document.getElementById('addOrgBtn').addEventListener('click', showAddOrgModal);
+        document.getElementById('searchBtn').addEventListener('click', filterOrganizations);
+        document.getElementById('searchInput').addEventListener('keyup', event => {
+            if (event.key === 'Enter') filterOrganizations();
+        });
+        
+        // Modal close buttons
+        document.querySelectorAll('.modal-close, .cancel-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('orgModal').style.display = 'none';
+                document.getElementById('confirmModal').style.display = 'none';
+            });
+        });
+        
+        // Form submission
+        document.getElementById('organizationForm').addEventListener('submit', handleSaveOrganization);
+        
+        // Confirm delete button
+        document.getElementById('confirmDeleteBtn').addEventListener('click', handleDeleteOrganization);
+        
+        // Initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    });
+    
+    async function loadOrganizations() {
+        try {
+            const response = await fetch('/organisations/list/');
+            if (!response.ok) {
+                throw new Error('Failed to load organizations');
+            }
+            
+            organizations = await response.json();
+            
+            // Build a hierarchical structure
+            const orgMap = {};
+            organizations.forEach(org => {
+                org.children = [];
+                orgMap[org.id] = org;
+            });
+            
+            const rootOrgs = [];
+            organizations.forEach(org => {
+                if (org.parent_id && orgMap[org.parent_id]) {
+                    orgMap[org.parent_id].children.push(org);
+                } else {
+                    rootOrgs.push(org);
+                }
+            });
+            
+            renderOrganizationStructure(rootOrgs);
+            populateParentDropdown();
+        } catch (error) {
+            console.error('Error loading organizations:', error);
+            document.getElementById('organizationStructure').innerHTML = 
+                '<div class="alert alert-warning">Unable to load organizations. Please try again later.</div>';
+        }
+    }
+    
+    function renderOrganizationStructure(orgs) {
+        const container = document.getElementById('organizationStructure');
+        container.innerHTML = '';
+        
+        if (!orgs || orgs.length === 0) {
+            container.innerHTML = '<p>No organizations found.</p>';
+            return;
+        }
+        
+        // Recursively render the organization tree
+        function renderNode(node) {
+            const nodeEl = document.createElement('div');
+            nodeEl.className = 'org-node';
+            nodeEl.dataset.id = node.id;
+            
+            nodeEl.innerHTML = `
+                <div class="org-node-content">
+                    <span class="org-node-name">${node.name}</span>
+                    <div class="org-node-actions">
+                        <button class="btn btn-sm btn-primary edit-org" data-id="${node.id}">
+                            <i data-feather="edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-org" data-id="${node.id}">
+                            <i data-feather="trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add child nodes if they exist
+            if (node.children && node.children.length > 0) {
+                const childrenContainer = document.createElement('div');
+                childrenContainer.className = 'org-children';
+                
+                node.children.forEach(child => {
+                    childrenContainer.appendChild(renderNode(child));
+                });
+                
+                nodeEl.appendChild(childrenContainer);
+            }
+            
+            return nodeEl;
+        }
+        
+        // Render each top-level organization
+        orgs.forEach(org => {
+            container.appendChild(renderNode(org));
+        });
+        
+        // Initialize feather icons for the newly added buttons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        
+        // Add event listeners to the edit and delete buttons
+        document.querySelectorAll('.edit-org').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const orgId = e.currentTarget.dataset.id;
+                showEditOrgModal(parseInt(orgId));
+            });
+        });
+        
+        document.querySelectorAll('.delete-org').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const orgId = e.currentTarget.dataset.id;
+                showDeleteConfirmation(parseInt(orgId));
+            });
+        });
+    }
+    
+    function showStructureView() {
+        document.getElementById('structureViewBtn').classList.add('active');
+        document.getElementById('structureViewBtn').classList.remove('btn-outline-primary');
+        document.getElementById('structureViewBtn').classList.add('btn-primary');
+        
+        document.getElementById('userViewBtn').classList.remove('active');
+        document.getElementById('userViewBtn').classList.add('btn-outline-primary');
+        document.getElementById('userViewBtn').classList.remove('btn-primary');
+        
+        document.getElementById('organizationStructure').style.display = 'block';
+        document.getElementById('userHierarchy').style.display = 'none';
+    }
+    
+    function showUserView() {
+        document.getElementById('userViewBtn').classList.add('active');
+        document.getElementById('userViewBtn').classList.remove('btn-outline-primary');
+        document.getElementById('userViewBtn').classList.add('btn-primary');
+        
+        document.getElementById('structureViewBtn').classList.remove('active');
+        document.getElementById('structureViewBtn').classList.add('btn-outline-primary');
+        document.getElementById('structureViewBtn').classList.remove('btn-primary');
+        
+        document.getElementById('organizationStructure').style.display = 'none';
+        document.getElementById('userHierarchy').style.display = 'block';
+        
+        // Load user hierarchy data
+        loadUserHierarchy();
+    }
+    
+    function loadUserHierarchy() {
+        const container = document.getElementById('userHierarchy');
+        
+        // For demo purposes, we'll just show a placeholder
+        container.innerHTML = `
+            <div class="alert alert-info">
+                <p>User hierarchy view will be implemented in a future update.</p>
+                <p>This view will show users organized by their reporting structure within organizations.</p>
+            </div>
+        `;
+    }
+    
+    function filterOrganizations() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        // Filter visible organizations based on the search term
+        document.querySelectorAll('.org-node').forEach(node => {
+            const name = node.querySelector('.org-node-name').textContent.toLowerCase();
+            if (name.includes(searchTerm)) {
+                node.style.display = 'block';
+                
+                // Make sure all parent nodes are visible
+                let parent = node.parentElement;
+                while (parent && parent.classList.contains('org-children')) {
+                    parent.parentElement.style.display = 'block';
+                    parent = parent.parentElement.parentElement;
+                }
+            } else {
+                // Only hide if none of the children match
+                const hasMatchingChild = Array.from(node.querySelectorAll('.org-node-name'))
+                    .some(el => el.textContent.toLowerCase().includes(searchTerm));
+                
+                if (!hasMatchingChild) {
+                    node.style.display = 'none';
+                } else {
+                    node.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    function populateParentDropdown() {
+        const dropdown = document.getElementById('parentOrg');
+        
+        // Clear existing options (except the first one)
+        const firstOption = dropdown.options[0];
+        dropdown.innerHTML = '';
+        dropdown.appendChild(firstOption);
+        
+        // Add each organization as an option
+        organizations.forEach(org => {
+            const option = document.createElement('option');
+            option.value = org.id;
+            option.textContent = org.name;
+            dropdown.appendChild(option);
+        });
+    }
+    
+    function showAddOrgModal() {
+        document.getElementById('modalTitle').textContent = 'Add Organization';
+        document.getElementById('orgId').value = '';
+        document.getElementById('orgName').value = '';
+        document.getElementById('parentOrg').value = '';
+        document.getElementById('orgLogo').value = '';
+        
+        document.getElementById('orgModal').style.display = 'block';
+    }
+    
+    function showEditOrgModal(orgId) {
+        const org = organizations.find(o => o.id === orgId);
+        if (!org) return;
+        
+        document.getElementById('modalTitle').textContent = 'Edit Organization';
+        document.getElementById('orgId').value = org.id;
+        document.getElementById('orgName').value = org.name;
+        document.getElementById('parentOrg').value = org.parent_id || '';
+        
+        // Remove the organization from parent options (to prevent circular references)
+        const dropdown = document.getElementById('parentOrg');
+        for (let i = 0; i < dropdown.options.length; i++) {
+            if (dropdown.options[i].value === String(org.id)) {
+                dropdown.options[i].disabled = true;
+            } else {
+                dropdown.options[i].disabled = false;
+            }
+        }
+        
+        document.getElementById('orgModal').style.display = 'block';
+    }
+    
+    function showDeleteConfirmation(orgId) {
+        currentOrgId = orgId;
+        document.getElementById('confirmModal').style.display = 'block';
+    }
+    
+    async function handleSaveOrganization(event) {
+        event.preventDefault();
+        
+        const orgId = document.getElementById('orgId').value;
+        const orgName = document.getElementById('orgName').value;
+        const parentId = document.getElementById('parentOrg').value;
+        const logoFile = document.getElementById('orgLogo').files[0];
+        
+        const formData = new FormData();
+        formData.append('name', orgName);
+        if (parentId) formData.append('parent_id', parentId);
+        if (logoFile) formData.append('logo', logoFile);
+        
+        try {
+            let url = '/organisations/create/';
+            let method = 'POST';
+            
+            if (orgId) {
+                url = `/organisations/${orgId}/update/`;
+                method = 'POST';
+            }
+            
+            const response = await fetch(url, {
+                method: method,
+                body: formData,
+                headers: {
+                    'X-CSRFToken': Helpers.getCsrfToken()
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to save organization');
+            }
+            
+            // Close the modal and reload organizations
+            document.getElementById('orgModal').style.display = 'none';
+            await loadOrganizations();
+            
+            // Show success message
+            const container = document.querySelector('.card-body');
+            Helpers.showAlert(`Organization ${orgId ? 'updated' : 'created'} successfully`, 'success', container);
+        } catch (error) {
+            console.error('Error saving organization:', error);
+            // Show error message
+            const container = document.querySelector('.card-body');
+            Helpers.showAlert('Error saving organization. Please try again.', 'danger', container);
+        }
+    }
+    
+    async function handleDeleteOrganization() {
+        if (!currentOrgId) return;
+        
+        try {
+            const response = await fetch(`/organisations/${currentOrgId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': Helpers.getCsrfToken()
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to delete organization');
+            }
+            
+            // Close the modal and reload organizations
+            document.getElementById('confirmModal').style.display = 'none';
+            await loadOrganizations();
+            
+            // Show success message
+            const container = document.querySelector('.card-body');
+            Helpers.showAlert('Organization deleted successfully', 'success', container);
+        } catch (error) {
+            console.error('Error deleting organization:', error);
+            // Show error message
+            const container = document.querySelector('.card-body');
+            Helpers.showAlert('Error deleting organization. Please try again.', 'danger', container);
+        }
+    }
+</script>
+{% endblock %}

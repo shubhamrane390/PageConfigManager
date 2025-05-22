@@ -7,7 +7,7 @@ from django.utils import timezone
 
 class DashboardView(TemplateView):
     """Dashboard view showing overview of the system"""
-    template_name = 'index.html'
+    template_name = 'dashboard.html'
 
 
 class OrganisationListView(TemplateView):
@@ -83,11 +83,62 @@ def dashboard_data(request):
     for org in OrganisationModel.objects.all():
         mappings_count += org.page_configurations.count()
     
+    # Create a simple organization hierarchy for display
+    organization_preview = []
+    orgs = list(OrganisationModel.objects.all())
+    if orgs:
+        # For demo purposes, we'll create a sample hierarchy
+        root_org = {
+            'id': orgs[0].id,
+            'name': orgs[0].name,
+            'children': []
+        }
+        
+        # Add other orgs as children for visualization
+        for org in orgs[1:]:
+            root_org['children'].append({
+                'id': org.id,
+                'name': org.name
+            })
+        
+        organization_preview.append(root_org)
+    
+    # Sample data for roles (to be implemented with actual user models)
+    role_counts = {
+        'admin': 2,
+        'manager': 3,
+        'user': 10
+    }
+    
+    # Sample recent activities (to be implemented with actual activity log)
+    recent_activities = [
+        {
+            'user': 'John Doe',
+            'action': 'Created organization: ' + recent_organizations[0]['name'] if recent_organizations else 'New Organization',
+            'timestamp': timezone.now().isoformat()
+        },
+        {
+            'user': 'Admin',
+            'action': 'Updated page configurations',
+            'timestamp': (timezone.now() - timezone.timedelta(hours=2)).isoformat()
+        },
+        {
+            'user': 'Jane Smith',
+            'action': 'Added new user',
+            'timestamp': (timezone.now() - timezone.timedelta(days=1)).isoformat()
+        }
+    ]
+    
     data = {
         'organizations_count': organizations_count,
+        'users_count': sum(role_counts.values()),
+        'activities_count': len(recent_activities),
         'page_configs_count': page_configs_count,
         'mappings_count': mappings_count,
-        'recent_organizations': recent_organizations
+        'recent_organizations': recent_organizations,
+        'organization_preview': organization_preview,
+        'role_counts': role_counts,
+        'recent_activities': recent_activities
     }
     
     return JsonResponse(data)
