@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Organizations - Access Control System{% endblock %}
+
+{% block content %}
+<div id="organizationListContainer">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Organizations</h2>
+                <a href="{% url 'organization-create' %}" class="btn btn-primary">
+                    <i data-feather="plus"></i> Create Organization
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">
+                Manage your organizations and their hierarchical structure. Organizations can be assigned 
+                custom page configurations and have members with different roles.
+            </p>
+            
+            <div id="organizationsTableContainer">
+                <p>Loading organizations...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    onDOMReady(async () => {
+        try {
+            Helpers.showLoading('Loading organizations...');
+            
+            const response = await Helpers.fetchAPI('/organisations/list/', {
+                method: 'GET'
+            });
+            
+            Helpers.hideLoading();
+            
+            const container = document.getElementById('organizationsTableContainer');
+            
+            if (response && response.length > 0) {
+                const table = document.createElement('table');
+                table.className = 'table';
+                
+                // Table header
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>Name</th>
+                        <th>Members</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                `;
+                
+                // Table body
+                const tbody = document.createElement('tbody');
+                
+                response.forEach(org => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${org.name}</td>
+                        <td>${org.member_count || 0}</td>
+                        <td>${org.created_at ? Helpers.formatDate(org.created_at) : 'N/A'}</td>
+                        <td>
+                            <a href="/organizations/${org.id}/" class="btn btn-sm btn-primary">View</a>
+                            <a href="/map_org_pages/view/${org.id}/" class="btn btn-sm btn-warning">Configure</a>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                container.innerHTML = '';
+                container.appendChild(table);
+            } else {
+                container.innerHTML = '<p>No organizations found. <a href="/organizations/create/">Create your first organization</a>.</p>';
+            }
+        } catch (error) {
+            Helpers.hideLoading();
+            const container = document.getElementById('organizationsTableContainer');
+            Helpers.showAlert(error.message || 'Failed to load organizations', 'danger', container.parentNode);
+        }
+    });
+</script>
+{% endblock %}

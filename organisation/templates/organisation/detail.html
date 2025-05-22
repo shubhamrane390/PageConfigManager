@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+
+{% block title %}Organization Details - Access Control System{% endblock %}
+
+{% block content %}
+<div id="organizationDetail" data-organization-id="{{ organization_id }}">
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Organization Details</h2>
+                <div>
+                    <a href="/map_org_pages/view/{{ organization_id }}/" class="btn btn-primary">
+                        <i data-feather="settings"></i> Configure Pages
+                    </a>
+                    <a href="/organisations/edit/{{ organization_id }}/" class="btn btn-warning">
+                        <i data-feather="edit"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" id="orgDetailsContainer">
+            <div class="mb-3">
+                <strong>Name:</strong> <span class="org-name">Loading...</span>
+            </div>
+            <div class="mb-3">
+                <strong>Logo:</strong> <span class="org-logo">Loading...</span>
+            </div>
+            <div class="mb-3">
+                <strong>Created:</strong> <span class="org-created">Loading...</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Members</h2>
+                <button class="btn btn-primary" id="addMemberBtn">
+                    <i data-feather="user-plus"></i> Add Member
+                </button>
+            </div>
+        </div>
+        <div class="card-body" id="orgMembersContainer">
+            <p>Loading members...</p>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header">
+            <h2 class="card-title">Page Configurations</h2>
+        </div>
+        <div class="card-body" id="orgConfigsContainer">
+            <p>Loading page configurations...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    onDOMReady(() => {
+        const orgId = document.getElementById('organizationDetail').dataset.organizationId;
+        loadOrganizationDetails(orgId);
+        
+        // Add member button in organization detail
+        const addMemberBtn = document.getElementById('addMemberBtn');
+        if (addMemberBtn) {
+            addMemberBtn.addEventListener('click', handleAddMember);
+        }
+    });
+    
+    /**
+     * Loads organization details
+     * @param {number} orgId - Organization ID
+     */
+    async function loadOrganizationDetails(orgId) {
+        try {
+            Helpers.showLoading('Loading organization details...');
+            
+            const response = await Helpers.fetchAPI(`/organisations/${orgId}/`, {
+                method: 'GET'
+            });
+            
+            Helpers.hideLoading();
+            
+            if (response) {
+                renderOrganizationDetails(response);
+            }
+        } catch (error) {
+            Helpers.hideLoading();
+            const container = document.getElementById('organizationDetail');
+            Helpers.showAlert(error.message || 'Failed to load organization details', 'danger', container);
+        }
+    }
+    
+    /**
+     * Renders organization details
+     * @param {Object} organization - Organization data
+     */
+    function renderOrganizationDetails(organization) {
+        const container = document.getElementById('organizationDetail');
+        const detailsContainer = document.getElementById('orgDetailsContainer');
+        const membersContainer = document.getElementById('orgMembersContainer');
+        const configsContainer = document.getElementById('orgConfigsContainer');
+        
+        // Update organization details
+        const nameElement = detailsContainer.querySelector('.org-name');
+        const logoElement = detailsContainer.querySelector('.org-logo');
+        const createdElement = detailsContainer.querySelector('.org-created');
+        
+        nameElement.textContent = organization.name;
+        
+        if (organization.logo) {
+            logoElement.innerHTML = `<img src="${organization.logo}" alt="${organization.name} Logo" style="max-width: 150px; max-height: 150px;">`;
+        } else {
+            logoElement.textContent = 'No logo uploaded';
+        }
+        
+        createdElement.textContent = organization.created_at ? Helpers.formatDate(organization.created_at) : 'N/A';
+        
+        // Render members
+        if (organization.members && organization.members.length > 0) {
+            const membersTable = document.createElement('table');
+            membersTable.className = 'table';
+            
+            // Table header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            `;
+            
+            // Table body
+            const tbody = document.createElement('tbody');
+            
+            organization.members.forEach(member => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${member.user.first_name} ${member.user.last_name}</td>
+                    <td>${member.role || 'Member'}</td>
+                    <td>${member.user.email}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning edit-member" data-id="${member.id}">Edit</button>
+                        <button class="btn btn-sm btn-danger remove-member" data-id="${member.id}">Remove</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            membersTable.appendChild(thead);
+            membersTable.appendChild(tbody);
+            membersContainer.innerHTML = '';
+            membersContainer.appendChild(membersTable);
+            
+            // Add event listeners
+            membersContainer.querySelectorAll('.edit-member').forEach(btn => {
+                btn.addEventListener('click', () => handleEditMember(btn.dataset.id));
+            });
+            
+            membersContainer.querySelectorAll('.remove-member').forEach(btn => {
+                btn.addEventListener('click', () => handleRemoveMember(btn.dataset.id));
+            });
+        } else {
+            membersContainer.innerHTML = '<p>No members in this organization. Click "Add Member" to add the first member.</p>';
+        }
+        
+        // Render page configurations
+        if (organization.page_configurations && organization.page_configurations.length > 0) {
+            const configTable = document.createElement('table');
+            configTable.className = 'table';
+            
+            // Table header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>Page</th>
+                    <th>Custom Name</th>
+                    <th>Display Order</th>
+                </tr>
+            `;
+            
+            // Table body
+            const tbody = document.createElement('tbody');
+            
+            organization.page_configurations.forEach(config => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${config.page_identifier}</td>
+                    <td>${config.custom_name}</td>
+                    <td>${config.display_order}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            configTable.appendChild(thead);
+            configTable.appendChild(tbody);
+            configsContainer.innerHTML = '';
+            configsContainer.appendChild(configTable);
+        } else {
+            configsContainer.innerHTML = `
+                <p>No page configurations mapped to this organization.</p>
+                <a href="/map_org_pages/view/${organization.id}/" class="btn btn-primary">
+                    <i data-feather="settings"></i> Configure Pages
+                </a>
+            `;
+        }
+        
+        // Initialize feather icons if available
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+    
+    /**
+     * Handles adding a new member to the organization
+     */
+    function handleAddMember() {
+        const orgId = document.getElementById('organizationDetail').dataset.organizationId;
+        
+        // Create modal for adding member
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        modal.style.display = 'flex';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.zIndex = '1000';
+        
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+        modalContent.style.backgroundColor = 'white';
+        modalContent.style.padding = '20px';
+        modalContent.style.borderRadius = 'var(--border-radius)';
+        modalContent.style.width = '90%';
+        modalContent.style.maxWidth = '500px';
+        
+        modalContent.innerHTML = `
+            <h3 class="mb-2">Add Member to Organization</h3>
+            <form id="addMemberForm">
+                <div class="form-group">
+                    <label for="memberEmail">Email</label>
+                    <input type="email" id="memberEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberRole">Role</label>
+                    <select id="memberRole" name="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="member" selected>Member</option>
+                        <option value="viewer">Viewer</option>
+                    </select>
+                </div>
+                <div class="form-group text-right">
+                    <button type="button" class="btn btn-danger cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Member</button>
+                </div>
+            </form>
+        `;
+        
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        
+        // Handle close modal
+        modal.querySelector('.cancel-btn').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        // Handle submit form
+        modal.querySelector('#addMemberForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            if (!Helpers.validateForm(form)) {
+                return;
+            }
+            
+            const formData = new FormData(form);
+            const memberData = {
+                email: formData.get('email'),
+                role: formData.get('role'),
+                organization: orgId
+            };
+            
+            try {
+                Helpers.showLoading('Adding member...');
+                
+                const response = await Helpers.fetchAPI(`/organisations/${orgId}/members/`, {
+                    method: 'POST',
+                    body: JSON.stringify(memberData)
+                });
+                
+                Helpers.hideLoading();
+                
+                if (response.success) {
+                    modal.remove();
+                    Helpers.showAlert('Member added successfully!', 'success', document.getElementById('organizationDetail'));
+                    
+                    // Reload organization details
+                    loadOrganizationDetails(orgId);
+                } else {
+                    throw new Error(response.message || 'Failed to add member');
+                }
+            } catch (error) {
+                Helpers.hideLoading();
+                Helpers.showAlert(error.message || 'Failed to add member', 'danger', form.parentNode);
+            }
+        });
+    }
+    
+    /**
+     * Handles editing a member
+     * @param {number} memberId - Member ID
+     */
+    function handleEditMember(memberId) {
+        // Implementation will be similar to handleAddMember but with editing logic
+        alert('Edit member functionality will be implemented here.');
+    }
+    
+    /**
+     * Handles removing a member
+     * @param {number} memberId - Member ID
+     */
+    function handleRemoveMember(memberId) {
+        // Implementation will be similar to handleAddMember but with removal logic
+        alert('Remove member functionality will be implemented here.');
+    }
+</script>
+{% endblock %}

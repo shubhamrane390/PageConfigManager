@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block title %}Map Page Configurations - Access Control System{% endblock %}
+
+{% block content %}
+<div id="mappingContainer" data-organization-id="{{ organization_id }}">
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="card-title">Map Page Configurations for: <span id="orgName">Loading...</span></h2>
+                <button class="btn btn-primary" id="saveMappingsBtn" disabled>
+                    <i data-feather="save"></i> Save Mappings
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">
+                Customize how UI components appear for this organization. You can rename components and 
+                control their visibility. Changes made here will only affect this organization.
+            </p>
+            
+            <div id="mappingsTableContainer">
+                <p>Loading page configurations...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    onDOMReady(() => {
+        // Mapping page
+        const mappingContainer = document.getElementById('mappingContainer');
+        if (mappingContainer) {
+            const orgId = mappingContainer.dataset.organizationId;
+            loadMappingData(orgId);
+        }
+        
+        // Save mappings button
+        const saveMappingsBtn = document.getElementById('saveMappingsBtn');
+        if (saveMappingsBtn) {
+            saveMappingsBtn.addEventListener('click', handleSaveMappings);
+        }
+    });
+
+    /**
+     * Loads mapping data for an organization
+     * @param {number} orgId - Organization ID
+     */
+    async function loadMappingData(orgId) {
+        try {
+            Helpers.showLoading('Loading mapping data...');
+            
+            // Load organization details
+            const orgResponse = await Helpers.fetchAPI(`/organisations/${orgId}/`, {
+                method: 'GET'
+            });
+            
+            // Load all page configurations
+            const configsResponse = await Helpers.fetchAPI('/page_configs/', {
+                method: 'GET'
+            });
+            
+            // Load existing mappings
+            const mappingsResponse = await Helpers.fetchAPI(`/map_org_pages/${orgId}/`, {
+                method: 'GET'
+            });
+            
+            Helpers.hideLoading();
+            
+            if (orgResponse && configsResponse) {
+                renderMappingInterface(orgResponse, configsResponse, mappingsResponse || { mappings: [] });
+            }
+        } catch (error) {
+            Helpers.hideLoading();
+            const container = document.getElementById('mappingContainer');
+            Helpers.showAlert(error.message || 'Failed to load mapping data', 'danger', container);
+        }
+    }
+
+    /**
+     * Renders the mapping interface
+     * @param {Object} organization - Organization data
+     * @param {Array} configurations - All page configurations
+     * @param {Object} mappings - Existing mappings
+     */
+    function renderMappingInterface(organization, configurations, mappings) {
+        const container = document.getElementById('mappingContainer');
+        const orgNameElem = document.getElementById('orgName');
+        const mappingsTableContainer = document.getElementById('mappingsTableContainer');
+        
+        orgNameElem.textContent = organization.name;
+        
+        // Group configurations by page identifier
+        const groupedConfigs = {};
+        configurations.forEach(config => {
+            if (!groupedConfigs[config.page_identifier]) {
+                groupedConfigs[config.page_identifier] = [];
+            }
+            groupedConfigs[config.page_identifier].push(config);
+        });
+        
+        mappingsTableContainer.innerHTML = '';
+        
+        // For each page, create a mapping section
+        Object.keys(groupedConfigs).sort().forEach(pageId => {
+            const pageConfigs = groupedConfigs[pageId];
+            pageConfigs.sort((a, b) => a.display_order - b.display_order);
+            
+            const pageSection = document.createElement('div');
+            pageSection.className = 'card mb-3';
+            
+            const pageHeader = document.createElement('div');
+            pageHeader.className = 'card-header';
+            pageHeader.innerHTML = `
+                <h3 class="card-title">${pageId}</h3>
+            `;
+            
+            const pageBody = document.createElement('div');
+            pageBody.className = 'card-body';
+            
+            // Create table for mapping
+            const table = document.createElement('table');
+            table.className = 'table';
+            
+            // Table header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>Display Order</th>
+                    <th>Default Name</th>
+                    <th>Custom Name</th>
+                    <th>Visible</th>
+                </tr>
+            `;
+            
+            // Table body
+            const tbody = document.createElement('tbody');
+            
+            pageConfigs.forEach(config => {
+                // Check if this config is assigned to the organization
+                const isAssigned = organization.page_configurations.some(c => c.id === config.id);
+                
+                // Find existing mapping for this config
+                const existingMapping = mappings.mappings ? mappings.mappings.find(m => m.page_configuration === config.id) : null;
+                
+                const tr = document.createElement('tr');
+                tr.dataset.configId = config.id;
+                tr.innerHTML = `
+                    <td>${config.display_order}</td>
+                    <td>${config.custom_name || 'N/A'}</td>
+                    <td>
+                        <input type="text" class="custom-name-input" 
+                               value="${existingMapping?.custom_name || config.custom_name || ''}" 
+                               data-original="${config.custom_name || ''}">
+                    </td>
+                    <td>
+                        <input type="checkbox" class="visibility-checkbox" 
+                               ${existingMapping?.is_visible !== false ? 'checked' : ''}>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            pageBody.appendChild(table);
+            
+            pageSection.appendChild(pageHeader);
+            pageSection.appendChild(pageBody);
+            mappingsTableContainer.appendChild(pageSection);
+        });
+        
+        // Enable save button
+        document.getElementById('saveMappingsBtn').disabled = false;
+    }
+
+    /**
+     * Handles saving mappings
+     */
+    async function handleSaveMappings() {
+        const orgId = document.getElementById('mappingContainer').dataset.organizationId;
+        
+        try {
+            // Collect mapping data
+            const mappings = [];
+            
+            document.querySelectorAll('#mappingsTableContainer tr[data-config-id]').forEach(row => {
+                const configId = parseInt(row.dataset.configId);
+                const customNameInput = row.querySelector('.custom-name-input');
+                const visibilityCheckbox = row.querySelector('.visibility-checkbox');
+                
+                const customName = customNameInput.value.trim();
+                const isVisible = visibilityCheckbox.checked;
+                
+                // Only add to mappings if something is changed
+                if (customName !== customNameInput.dataset.original || !isVisible) {
+                    mappings.push({
+                        page_configuration: configId,
+                        custom_name: customName,
+                        is_visible: isVisible
+                    });
+                }
+            });
+            
+            // Collect page_config_ids for all visible items
+            const pageConfigIds = [];
+            document.querySelectorAll('#mappingsTableContainer tr[data-config-id]').forEach(row => {
+                const configId = parseInt(row.dataset.configId);
+                const visibilityCheckbox = row.querySelector('.visibility-checkbox');
+                
+                if (visibilityCheckbox.checked) {
+                    pageConfigIds.push(configId);
+                }
+            });
+            
+            Helpers.showLoading('Saving mappings...');
+            
+            // First save the page_config_ids to associate with the organization
+            const assignResponse = await Helpers.fetchAPI(`/map_org_pages/${orgId}/`, {
+                method: 'POST',
+                body: JSON.stringify({ page_config_ids: pageConfigIds })
+            });
+            
+            // Then save the custom mappings if any
+            if (mappings.length > 0) {
+                const mappingResponse = await Helpers.fetchAPI(`/map_org_pages/${orgId}/custom/`, {
+                    method: 'POST',
+                    body: JSON.stringify({ mappings })
+                });
+            }
+            
+            Helpers.hideLoading();
+            
+            Helpers.showAlert('Mappings saved successfully!', 'success', document.getElementById('mappingContainer'));
+            
+            // Reload mapping data to get fresh state
+            loadMappingData(orgId);
+            
+        } catch (error) {
+            Helpers.hideLoading();
+            Helpers.showAlert(error.message || 'Failed to save mappings', 'danger', document.getElementById('mappingContainer'));
+        }
+    }
+</script>
+{% endblock %}

@@ -7,6 +7,7 @@ const API = {
     ORGANIZATION: {
         CREATE: '/create_organisation/',
         DETAIL: (id) => `/organisations/${id}/`,
+        LIST: '/organisations/list/',
     },
     PAGE_CONFIG: {
         LIST: '/page_configs/',
