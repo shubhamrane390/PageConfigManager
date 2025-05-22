@@ -1,0 +1,253 @@
+# Access Control System - Frontend Integration Guide
+
+## Overview
+
+This document provides guidance on integrating the frontend templates with your Django backend APIs. The frontend is built using HTML, CSS, and vanilla JavaScript with Tailwind CSS for modern styling. This guide is intended for frontend developers who will be working with backend engineers to connect the UI to the APIs.
+
+## Project Structure
+
+The project follows a typical Django template structure:
+
+```
+templates/
+├── base.html                  # Main template with sidebar, header, and common scripts
+├── dashboard.html             # Dashboard with metrics and overview
+├── organisation/
+│   ├── list.html              # Organization management with tree structure
+│   ├── create.html            # Create new organization form
+│   └── detail.html            # Organization details view
+├── location_hierarchy/
+│   └── list.html              # Location hierarchy management with tree structure
+├── users/
+│   └── list.html              # User management with list and tree views
+├── permissions/
+│   └── list.html              # Permissions management with role-based controls
+└── configuration.html         # UI configuration for end-user websites
+```
+
+## API Integration Points
+
+### 1. Organization Management
+
+**Frontend Template**: `templates/organisation/list.html`
+
+**API Endpoints Needed**:
+- `GET /api/organizations/` - Fetch all organizations
+- `POST /api/organizations/` - Create a new organization
+- `PUT /api/organizations/{id}/` - Update an organization
+- `DELETE /api/organizations/{id}/` - Delete an organization
+
+**Data Structure**:
+```json
+{
+  "id": 1,
+  "name": "Headquarters",
+  "parent_id": null,
+  "description": "Main organization",
+  "children": [...]  // Nested organization objects
+}
+```
+
+**Integration Notes**:
+- The tree structure is built client-side from a flat list of organizations
+- Each organization must have an ID, name, and parent_id (null for root organizations)
+- The frontend expects a hierarchical relationship between organizations
+
+### 2. Location Hierarchy Management
+
+**Frontend Template**: `templates/location_hierarchy/list.html`
+
+**API Endpoints Needed**:
+- `GET /api/location-hierarchies/` - Fetch all hierarchy types
+- `POST /api/location-hierarchies/` - Create a new hierarchy type
+- `PUT /api/location-hierarchies/{id}/` - Update a hierarchy type
+- `DELETE /api/location-hierarchies/{id}/` - Delete a hierarchy type
+- `GET /api/locations/?hierarchy_type={id}` - Fetch locations for a specific hierarchy type
+- `POST /api/locations/` - Create a new location
+- `PUT /api/locations/{id}/` - Update a location
+- `DELETE /api/locations/{id}/` - Delete a location
+
+**Data Structure for Hierarchy Types**:
+```json
+{
+  "id": 1,
+  "name": "Country",
+  "level": 1,
+  "organisation": 1
+}
+```
+
+**Data Structure for Locations**:
+```json
+{
+  "id": 1,
+  "name": "United States",
+  "hierarchy_type": 1,
+  "parent": null,
+  "children": [...]  // Nested location objects (optional, can be built client-side)
+}
+```
+
+**Integration Notes**:
+- Users first select a hierarchy type, then view/edit locations within that hierarchy
+- Locations are displayed in a tree structure with parent-child relationships
+- The frontend builds the tree structure from a flat list of locations
+
+### 3. User Management
+
+**Frontend Template**: `templates/users/list.html`
+
+**API Endpoints Needed**:
+- `GET /api/users/` - Fetch all users
+- `POST /api/users/` - Create a new user
+- `PUT /api/users/{id}/` - Update a user
+- `DELETE /api/users/{id}/` - Delete a user
+
+**Data Structure**:
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "role": "admin",
+  "organization_id": 1
+}
+```
+
+**Integration Notes**:
+- The frontend provides both a list view and an organization tree view
+- The organization tree view requires organization data from the organizations API
+- Users can be filtered by role and organization
+
+### 4. Permissions Management
+
+**Frontend Template**: `templates/permissions/list.html`
+
+**API Endpoints Needed**:
+- `GET /api/roles/` - Fetch all roles
+- `GET /api/permissions/` - Fetch all permissions
+- `GET /api/roles/{id}/permissions/` - Fetch permissions for a specific role
+- `PUT /api/roles/{id}/permissions/` - Update permissions for a role
+
+**Data Structure**:
+```json
+{
+  "role": "admin",
+  "permissions": [
+    {
+      "id": 1,
+      "name": "view_dashboard",
+      "description": "View dashboard",
+      "category": "dashboard"
+    },
+    ...
+  ]
+}
+```
+
+**Integration Notes**:
+- The frontend displays permissions grouped by category
+- Users can toggle permissions on/off for each role
+- Changes are saved when the user clicks the "Save Permissions" button
+
+### 5. End-User Website Configuration
+
+**Frontend Template**: `templates/configuration.html`
+
+**API Endpoints Needed**:
+- `GET /api/end-user-configuration/navigation` - Fetch navigation configuration
+- `POST /api/end-user-configuration/navigation` - Save navigation configuration
+
+**Data Structure**:
+```json
+[
+  {
+    "id": "dashboard",
+    "defaultLabel": "Dashboard",
+    "customLabel": "Dashboard",
+    "icon": "grid"
+  },
+  ...
+]
+```
+
+**Integration Notes**:
+- The configuration is for the end-user's website, not the admin interface
+- Users can customize labels and the sequence of navigation items
+- Changes are saved to the database and applied to end-user websites
+
+## Authentication and Security
+
+The frontend expects the following security measures:
+
+1. **CSRF Protection**: All POST/PUT/DELETE requests should include a CSRF token, which is obtained from cookies or a dedicated endpoint.
+
+2. **Authentication**: The frontend assumes the user is already authenticated through Django's authentication system.
+
+3. **Authorization**: API endpoints should check if the user has the necessary permissions before processing requests.
+
+## Error Handling
+
+The frontend handles errors in the following ways:
+
+1. **API Errors**: If an API request fails, the frontend will display an error message to the user.
+
+2. **Validation Errors**: Form validation is performed client-side, but the backend should also validate inputs.
+
+3. **Not Found Errors**: If a requested resource is not found, the frontend will display an appropriate message.
+
+## CSS and Styling
+
+The project uses a combination of:
+
+1. **Tailwind CSS**: For modern, responsive UI components
+2. **Custom CSS**: In `static/css/styles.css` for additional styling
+3. **Feather Icons**: For consistent icon system
+
+## JavaScript Components
+
+Common JavaScript utilities are defined in `base.html`:
+
+1. **Helpers.showAlert()**: Displays a notification message to the user
+2. **Helpers.showLoading()**: Shows a loading overlay during API requests
+3. **Helpers.fetchAPI()**: A wrapper around fetch() for making API requests
+
+## Responsive Design
+
+The UI is designed to be responsive:
+
+1. **Desktop**: Full sidebar and content area
+2. **Tablet**: Collapsible sidebar with toggle button
+3. **Mobile**: Hidden sidebar that can be toggled, stacked layouts
+
+## Accessibility
+
+The following accessibility features are implemented:
+
+1. **Keyboard Navigation**: All interactive elements can be accessed via keyboard
+2. **Screen Reader Support**: Proper ARIA attributes and semantic HTML
+3. **Focus Management**: Visible focus indicators for keyboard users
+
+## Testing
+
+When integrating with the backend:
+
+1. Test all CRUD operations for each entity
+2. Verify that tree structures are correctly built and displayed
+3. Test permission-based access restrictions
+4. Verify that configuration changes are correctly saved and applied
+
+## Production Deployment
+
+For production deployment:
+
+1. Replace Tailwind CSS CDN with a production build
+2. Minify CSS and JavaScript files
+3. Optimize images and other assets
+4. Configure proper caching headers
+
+## Further Resources
+
+- Tailwind CSS: https://tailwindcss.com/docs
+- Feather Icons: https://feathericons.com/
+- Django Templates: https://docs.djangoproject.com/en/5.2/topics/templates/

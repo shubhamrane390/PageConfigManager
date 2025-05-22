@@ -1,0 +1,564 @@
+# Access Control System - API Documentation
+
+This document provides detailed specifications for the backend APIs required to integrate with the frontend components. It includes endpoint definitions, request/response formats, and example implementations.
+
+## 1. Organization API
+
+### Fetch All Organizations
+
+**Endpoint:** `GET /api/organizations/`
+
+**Description:** Retrieves all organizations with their hierarchical structure.
+
+**Response Format:**
+```json
+[
+  {
+    "id": 1,
+    "name": "Headquarters",
+    "parent_id": null,
+    "description": "Main organization"
+  },
+  {
+    "id": 2,
+    "name": "Engineering",
+    "parent_id": 1,
+    "description": "Engineering department"
+  }
+]
+```
+
+**Implementation Notes:**
+- Return a flat list of all organizations
+- Include parent_id for establishing the hierarchy
+- The frontend will build the tree structure
+
+### Create Organization
+
+**Endpoint:** `POST /api/organizations/`
+
+**Request Format:**
+```json
+{
+  "name": "Marketing",
+  "parent_id": 1,
+  "description": "Marketing department"
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 3,
+  "name": "Marketing",
+  "parent_id": 1,
+  "description": "Marketing department"
+}
+```
+
+### Update Organization
+
+**Endpoint:** `PUT /api/organizations/{id}/`
+
+**Request Format:**
+```json
+{
+  "name": "Marketing Team",
+  "parent_id": 1,
+  "description": "Updated description"
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 3,
+  "name": "Marketing Team",
+  "parent_id": 1,
+  "description": "Updated description"
+}
+```
+
+### Delete Organization
+
+**Endpoint:** `DELETE /api/organizations/{id}/`
+
+**Response:** HTTP 204 No Content
+
+**Implementation Notes:**
+- Should delete the organization and all its children
+- Consider implementing a soft delete mechanism
+
+## 2. Location Hierarchy API
+
+### Fetch Hierarchy Types
+
+**Endpoint:** `GET /api/location-hierarchies/`
+
+**Response Format:**
+```json
+[
+  {
+    "id": 1,
+    "name": "Global",
+    "level": 1,
+    "organisation": 1
+  },
+  {
+    "id": 2,
+    "name": "Country",
+    "level": 2,
+    "organisation": 1
+  }
+]
+```
+
+### Create Hierarchy Type
+
+**Endpoint:** `POST /api/location-hierarchies/`
+
+**Request Format:**
+```json
+{
+  "name": "City",
+  "level": 3,
+  "organisation": 1
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 3,
+  "name": "City",
+  "level": 3,
+  "organisation": 1
+}
+```
+
+### Update Hierarchy Type
+
+**Endpoint:** `PUT /api/location-hierarchies/{id}/`
+
+**Request Format:**
+```json
+{
+  "name": "City/Region",
+  "level": 3,
+  "organisation": 1
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 3,
+  "name": "City/Region",
+  "level": 3,
+  "organisation": 1
+}
+```
+
+### Delete Hierarchy Type
+
+**Endpoint:** `DELETE /api/location-hierarchies/{id}/`
+
+**Response:** HTTP 204 No Content
+
+### Fetch Locations
+
+**Endpoint:** `GET /api/locations/?hierarchy_type={id}`
+
+**Response Format:**
+```json
+[
+  {
+    "id": 1,
+    "name": "North America",
+    "hierarchy_type": 1,
+    "parent": null
+  },
+  {
+    "id": 4,
+    "name": "United States",
+    "hierarchy_type": 2,
+    "parent": 1
+  }
+]
+```
+
+### Create Location
+
+**Endpoint:** `POST /api/locations/`
+
+**Request Format:**
+```json
+{
+  "name": "New York",
+  "hierarchy_type": 3,
+  "parent": 4
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 10,
+  "name": "New York",
+  "hierarchy_type": 3,
+  "parent": 4
+}
+```
+
+### Update Location
+
+**Endpoint:** `PUT /api/locations/{id}/`
+
+**Request Format:**
+```json
+{
+  "name": "New York City",
+  "hierarchy_type": 3,
+  "parent": 4
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 10,
+  "name": "New York City",
+  "hierarchy_type": 3,
+  "parent": 4
+}
+```
+
+### Delete Location
+
+**Endpoint:** `DELETE /api/locations/{id}/`
+
+**Response:** HTTP 204 No Content
+
+## 3. User Management API
+
+### Fetch Users
+
+**Endpoint:** `GET /api/users/`
+
+**Response Format:**
+```json
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "admin",
+    "organization_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "role": "manager",
+    "organization_id": 2
+  }
+]
+```
+
+### Create User
+
+**Endpoint:** `POST /api/users/`
+
+**Request Format:**
+```json
+{
+  "name": "Alice Williams",
+  "email": "alice@example.com",
+  "password": "securepassword",
+  "role": "user",
+  "organization_id": 3
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 3,
+  "name": "Alice Williams",
+  "email": "alice@example.com",
+  "role": "user",
+  "organization_id": 3
+}
+```
+
+### Update User
+
+**Endpoint:** `PUT /api/users/{id}/`
+
+**Request Format:**
+```json
+{
+  "name": "Alice B. Williams",
+  "email": "alice@example.com",
+  "role": "manager",
+  "organization_id": 3
+}
+```
+
+**Response Format:**
+```json
+{
+  "id": 3,
+  "name": "Alice B. Williams",
+  "email": "alice@example.com",
+  "role": "manager",
+  "organization_id": 3
+}
+```
+
+**Implementation Notes:**
+- Password is optional in update requests
+- If password is provided, it should be hashed before storing
+
+### Delete User
+
+**Endpoint:** `DELETE /api/users/{id}/`
+
+**Response:** HTTP 204 No Content
+
+## 4. Permissions API
+
+### Fetch Roles
+
+**Endpoint:** `GET /api/roles/`
+
+**Response Format:**
+```json
+[
+  "admin",
+  "manager",
+  "user",
+  "guest"
+]
+```
+
+### Fetch Permissions
+
+**Endpoint:** `GET /api/permissions/`
+
+**Response Format:**
+```json
+[
+  {
+    "id": 1,
+    "name": "view_dashboard",
+    "description": "View dashboard",
+    "category": "dashboard"
+  },
+  {
+    "id": 2,
+    "name": "view_statistics",
+    "description": "View statistics",
+    "category": "dashboard"
+  }
+]
+```
+
+### Fetch Role Permissions
+
+**Endpoint:** `GET /api/roles/{role}/permissions/`
+
+**Response Format:**
+```json
+{
+  "role": "admin",
+  "permissions": [1, 2, 3, 4, 5]
+}
+```
+
+**Implementation Notes:**
+- Returns the IDs of permissions assigned to the role
+
+### Update Role Permissions
+
+**Endpoint:** `PUT /api/roles/{role}/permissions/`
+
+**Request Format:**
+```json
+{
+  "permissions": [1, 2, 3, 5, 7]
+}
+```
+
+**Response Format:**
+```json
+{
+  "role": "admin",
+  "permissions": [1, 2, 3, 5, 7]
+}
+```
+
+## 5. End-User Configuration API
+
+### Fetch Navigation Configuration
+
+**Endpoint:** `GET /api/end-user-configuration/navigation`
+
+**Response Format:**
+```json
+[
+  {
+    "id": "dashboard",
+    "defaultLabel": "Dashboard",
+    "customLabel": "Dashboard",
+    "icon": "grid"
+  },
+  {
+    "id": "organisations",
+    "defaultLabel": "Organizations",
+    "customLabel": "Companies",
+    "icon": "briefcase"
+  }
+]
+```
+
+### Save Navigation Configuration
+
+**Endpoint:** `POST /api/end-user-configuration/navigation`
+
+**Request Format:**
+```json
+[
+  {
+    "id": "dashboard",
+    "defaultLabel": "Dashboard",
+    "customLabel": "Home",
+    "icon": "grid"
+  },
+  {
+    "id": "organisations",
+    "defaultLabel": "Organizations",
+    "customLabel": "Companies",
+    "icon": "briefcase"
+  }
+]
+```
+
+**Response Format:**
+```json
+{
+  "success": true,
+  "message": "Configuration saved successfully"
+}
+```
+
+## Authentication and Security
+
+### CSRF Token
+
+**Endpoint:** `GET /api/csrf-token/`
+
+**Response Format:**
+```json
+{
+  "csrfToken": "abc123xyz456"
+}
+```
+
+**Implementation Notes:**
+- This token should be included in the `X-CSRFToken` header for all POST/PUT/DELETE requests
+
+### Login
+
+**Endpoint:** `POST /api/login/`
+
+**Request Format:**
+```json
+{
+  "username": "john@example.com",
+  "password": "securepassword"
+}
+```
+
+**Response Format:**
+```json
+{
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "admin"
+  },
+  "token": "jwt_token_here"
+}
+```
+
+### Logout
+
+**Endpoint:** `POST /api/logout/`
+
+**Response Format:**
+```json
+{
+  "success": true,
+  "message": "Logged out successfully"
+}
+```
+
+## Error Handling
+
+All API endpoints should return appropriate HTTP status codes and error messages:
+
+### Example Error Response
+
+```json
+{
+  "error": true,
+  "message": "Organization not found",
+  "code": "NOT_FOUND"
+}
+```
+
+### Common Error Codes
+
+- 400 Bad Request: Invalid input data
+- 401 Unauthorized: Authentication required
+- 403 Forbidden: Insufficient permissions
+- 404 Not Found: Resource not found
+- 500 Internal Server Error: Server-side error
+
+## Pagination
+
+For endpoints that may return large amounts of data, implement pagination:
+
+### Example Paginated Response
+
+```json
+{
+  "count": 47,
+  "next": "/api/users/?page=2",
+  "previous": null,
+  "results": [
+    // User objects
+  ]
+}
+```
+
+## Filtering
+
+Support filtering for list endpoints:
+
+### Example Filtered Request
+
+`GET /api/users/?role=admin&organization_id=1`
+
+## Implementation Recommendations
+
+1. Use Django REST Framework for implementing the APIs
+2. Implement proper authentication and permission checks
+3. Use Django's ORM for database operations
+4. Add proper validation for all inputs
+5. Implement comprehensive error handling
+6. Add pagination for list endpoints
+7. Document all endpoints with docstrings
+8. Add unit tests for all endpoints

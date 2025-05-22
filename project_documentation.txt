@@ -1,0 +1,349 @@
+# Access Control System - Project Documentation
+
+## Project Overview
+
+The Access Control System is a Django-based application designed to manage organizations, user access, and UI component configurations. The system allows for hierarchical organization structures, location hierarchies, role-based permissions, and customizable UI components for end-user websites.
+
+## Architecture
+
+### Frontend
+
+- **HTML/CSS/JavaScript**: The frontend uses vanilla HTML/CSS and JavaScript
+- **Tailwind CSS**: For modern, responsive UI components
+- **Feather Icons**: For consistent iconography throughout the application
+
+### Backend
+
+- **Django**: Web framework for building the application
+- **Django REST Framework**: For building the API endpoints
+- **SQLite**: Database for development (configurable for PostgreSQL in production)
+
+### Key Components
+
+1. **Organization Management**: 
+   - Hierarchical structure for organizations
+   - Tree-based visualization
+   - CRUD operations for organizations
+
+2. **Location Hierarchy**:
+   - Multi-level location structures (Country, City, Office, etc.)
+   - Tree-based visualization
+   - CRUD operations for both hierarchy types and locations
+
+3. **User Management**:
+   - User creation and assignment to organizations
+   - Role-based access control
+   - Both list and tree visualization options
+
+4. **Permissions Management**:
+   - Role-based permission assignment
+   - Granular permission control
+   - Organized by functional categories
+
+5. **Configuration System**:
+   - Customization of UI components for end-user websites
+   - Ability to change labels and sequence of navigation items
+   - Settings stored per organization
+
+## Directory Structure
+
+```
+accesscontrol/             # Main Django project
+  ├── settings.py          # Project settings
+  ├── urls.py              # URL routing
+  └── wsgi.py              # WSGI configuration
+organisation/              # Organization app
+  ├── models.py            # Data models
+  ├── views.py             # API views
+  ├── template_views.py    # Template rendering views
+  └── serializers.py       # API serializers
+location_hierarchy/        # Location hierarchy app
+  ├── models.py            # Data models
+  ├── views.py             # API views
+  └── serializers.py       # API serializers
+templates/                 # HTML templates
+  ├── base.html            # Base template with layout
+  ├── dashboard.html       # Dashboard template
+  ├── organisation/        # Organization templates
+  ├── location_hierarchy/  # Location hierarchy templates
+  ├── users/               # User management templates
+  └── permissions/         # Permissions management templates
+static/                    # Static assets
+  ├── css/                 # CSS files
+  ├── js/                  # JavaScript files
+  └── img/                 # Images
+```
+
+## Data Models
+
+### Organization
+
+```python
+class OrganisationModel(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    description = models.TextField(blank=True, null=True)
+    logo = models.ImageField(upload_to='organisation_logos/', blank=True, null=True)
+    page_configurations = models.ManyToManyField(PageConfigurationModel, related_name="organisations", blank=True)
+```
+
+### Location Hierarchy
+
+```python
+class LocationHierarchyModel(models.Model):
+    organisation = models.ForeignKey(OrganisationModel, on_delete=models.CASCADE, related_name="hierarchy_levels")
+    level = models.PositiveSmallIntegerField()
+    name = models.CharField(max_length=100)
+    
+    class Meta:
+        unique_together = [('organisation', 'level'), ('organisation', 'name')]
+
+class LocationModel(models.Model):
+    hierarchy_type = models.ForeignKey(LocationHierarchyModel, on_delete=models.PROTECT)
+    name = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    path = models.CharField(max_length=1000, editable=False)  # Materialized path
+    full_name = models.CharField(max_length=1000, editable=False)
+```
+
+### User Management
+
+```python
+# Extend Django's built-in User model
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    organization = models.ForeignKey(OrganisationModel, on_delete=models.CASCADE, related_name='members')
+    role = models.CharField(max_length=20, choices=[
+        ('admin', 'Admin'),
+        ('manager', 'Manager'),
+        ('user', 'User'),
+        ('guest', 'Guest')
+    ])
+```
+
+### Permissions
+
+```python
+class Permission(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=255)
+    category = models.CharField(max_length=50)
+
+class RolePermission(models.Model):
+    role = models.CharField(max_length=20)
+    permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ('role', 'permission')
+```
+
+### UI Configuration
+
+```python
+class PageConfigurationModel(models.Model):
+    page_identifier = models.CharField(max_length=50)
+    display_order = models.PositiveIntegerField()
+    default_label = models.CharField(max_length=50)
+    custom_label = models.CharField(max_length=50)
+    icon = models.CharField(max_length=50)
+```
+
+## API Endpoints
+
+See `api_documentation.txt` for detailed API specifications.
+
+## Frontend Templates
+
+See `integration_guide.txt` for details on frontend template integration.
+
+## Installation and Setup
+
+### Prerequisites
+
+- Python 3.8+
+- Django 5.2+
+- Node.js (for development tools)
+
+### Development Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/accesscontrol.git
+   cd accesscontrol
+   ```
+
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Run migrations:
+   ```bash
+   python manage.py migrate
+   ```
+
+5. Create a superuser:
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+6. Run the development server:
+   ```bash
+   python manage.py runserver
+   ```
+
+7. Access the application at http://localhost:8000
+
+### Production Deployment
+
+For production deployment:
+
+1. Set `DEBUG = False` in settings.py
+2. Configure a production database (PostgreSQL recommended)
+3. Set up a web server (Nginx, Apache) with WSGI (Gunicorn, uWSGI)
+4. Configure static files serving
+5. Set up proper security settings (HTTPS, secure cookies, etc.)
+
+## Authentication and Security
+
+The application uses Django's built-in authentication system with the following enhancements:
+
+1. **Role-based Access Control**: Users are assigned roles that determine their permissions
+2. **Organization-based Access**: Users can only access data within their assigned organization
+3. **CSRF Protection**: All forms and API endpoints are protected against CSRF attacks
+4. **Password Hashing**: User passwords are securely hashed using Django's authentication system
+
+## User Roles
+
+1. **Admin**: Full access to all system features
+2. **Manager**: Can manage users and data within their organization
+3. **User**: Standard access to view and edit limited data
+4. **Guest**: View-only access to designated areas
+
+## Technical Implementation Details
+
+### Tree Structures
+
+Both organizations and locations are implemented as tree structures:
+
+1. **Organizations**: Simple parent-child relationship
+2. **Locations**: Uses materialized path for efficient querying
+
+### Permission System
+
+Permissions are stored as:
+
+1. **Permission Definition**: Name, description, category
+2. **Role Assignment**: Which roles have which permissions
+
+### Configuration System
+
+UI configurations are stored per organization and applied to the end-user website, not the admin interface.
+
+## Extending the System
+
+### Adding New Models
+
+1. Create the model in the appropriate app
+2. Create migrations: `python manage.py makemigrations`
+3. Apply migrations: `python manage.py migrate`
+4. Add serializers for API access
+5. Add views for API endpoints
+6. Update templates for UI interaction
+
+### Adding New Permissions
+
+1. Add the permission to the Permission model
+2. Update the permissions view to include the new permission
+3. Assign the permission to appropriate roles
+
+### Adding New UI Components
+
+1. Add the component to the UI configuration model
+2. Update the configuration template to include the new component
+3. Implement the component in the end-user website
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Database Migrations**: If you encounter migration issues, try:
+   ```bash
+   python manage.py makemigrations --merge
+   python manage.py migrate
+   ```
+
+2. **Static Files**: If static files aren't loading:
+   ```bash
+   python manage.py collectstatic
+   ```
+
+3. **Permission Denied**: Check user roles and permissions
+
+### Logging
+
+The system uses Django's logging system:
+
+```python
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+```
+
+## Performance Considerations
+
+1. **Database Indexing**: Key fields are indexed for performance
+2. **Query Optimization**: Complex queries are optimized
+3. **Caching**: Consider implementing caching for frequently accessed data
+
+## Testing
+
+The project includes:
+
+1. **Unit Tests**: Testing individual components
+2. **Integration Tests**: Testing component interactions
+3. **API Tests**: Testing API endpoints
+
+Run tests with:
+```bash
+python manage.py test
+```
+
+## Future Enhancements
+
+1. **Advanced Reporting**: Add reporting and analytics features
+2. **Audit Logging**: Track changes to key data
+3. **API Authentication**: Add token-based API authentication
+4. **Multi-factor Authentication**: Enhance security with MFA
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
