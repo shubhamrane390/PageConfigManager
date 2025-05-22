@@ -7,7 +7,7 @@ from django.utils import timezone
 
 class DashboardView(TemplateView):
     """Dashboard view showing overview of the system"""
-    template_name = 'organisation/dashboard.html'
+    template_name = 'index.html'
 
 
 class OrganisationListView(TemplateView):
