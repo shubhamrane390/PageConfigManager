@@ -4,665 +4,330 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Access Control System{% endblock %}</title>
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    
     {% block extra_css %}{% endblock %}
-    <style>
-        :root {
-            --primary-color: #3b82f6;
-            --secondary-color: #64748b;
-            --success-color: #22c55e;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --info-color: #3b82f6;
-            --background-color: #f9fafb;
-            --text-color: #1e293b;
-            --border-color: #e2e8f0;
-            --sidebar-width: 240px;
-            --header-height: 60px;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.5;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        
-        /* Layout */
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: #fff;
-            border-right: 1px solid var(--border-color);
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-            overflow-y: auto;
-        }
-        
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-        
-        .sidebar-content {
-            padding: 20px 0;
-        }
-        
-        .sidebar-nav {
-            list-style: none;
-        }
-        
-        .sidebar-nav-item {
-            margin-bottom: 4px;
-        }
-        
-        .sidebar-nav-link {
-            display: flex;
-            align-items: center;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: var(--secondary-color);
-            transition: all 0.2s ease;
-        }
-        
-        .sidebar-nav-link:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-            color: var(--primary-color);
-        }
-        
-        .sidebar-nav-link.active {
-            background-color: rgba(59, 130, 246, 0.1);
-            color: var(--primary-color);
-            border-left: 3px solid var(--primary-color);
-        }
-        
-        .sidebar-nav-icon {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
-        }
-        
-        /* Main content */
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Header */
-        .header {
-            height: var(--header-height);
-            background-color: #fff;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-        
-        .header-title {
-            font-weight: 500;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-        
-        .user-name {
-            margin-right: 10px;
-            font-weight: 500;
-        }
-        
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        
-        /* Content */
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
-        
-        /* Breadcrumbs */
-        .breadcrumbs {
-            display: flex;
-            margin-bottom: 20px;
-            color: var(--secondary-color);
-            font-size: 0.875rem;
-        }
-        
-        .breadcrumb-item:not(:last-child)::after {
-            content: "/";
-            margin: 0 8px;
-            color: var(--border-color);
-        }
-        
-        .breadcrumb-link {
-            color: var(--secondary-color);
-            text-decoration: none;
-        }
-        
-        .breadcrumb-link:hover {
-            color: var(--primary-color);
-        }
-        
-        /* Page header */
-        .page-header {
-            margin-bottom: 20px;
-        }
-        
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .page-description {
-            color: var(--secondary-color);
-            font-size: 0.875rem;
-        }
-        
-        /* Cards */
-        .card {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        
-        .card-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .card-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin: 0;
-        }
-        
-        .card-body {
-            padding: 20px;
-        }
-        
-        /* Forms */
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-        
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #2563eb;
-        }
-        
-        .btn-secondary {
-            background-color: #f1f5f9;
-            color: var(--secondary-color);
-        }
-        
-        .btn-secondary:hover {
-            background-color: #e2e8f0;
-        }
-        
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #16a34a;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        
-        .btn-warning {
-            background-color: var(--warning-color);
-            color: white;
-        }
-        
-        .btn-warning:hover {
-            background-color: #d97706;
-        }
-        
-        .btn-info {
-            background-color: var(--info-color);
-            color: white;
-        }
-        
-        .btn-info:hover {
-            background-color: #2563eb;
-        }
-        
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        
-        .btn-icon {
-            margin-right: 8px;
-        }
-        
-        /* Tables */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .table th,
-        .table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .table th {
-            font-weight: 600;
-            background-color: #f8fafc;
-            color: var(--secondary-color);
-        }
-        
-        .table tr:hover {
-            background-color: #f8fafc;
-        }
-        
-        /* Alerts */
-        .alert {
-            padding: 12px 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border-left: 4px solid transparent;
-        }
-        
-        .alert-success {
-            background-color: #f0fdf4;
-            border-color: var(--success-color);
-            color: #16a34a;
-        }
-        
-        .alert-danger {
-            background-color: #fef2f2;
-            border-color: var(--danger-color);
-            color: #dc2626;
-        }
-        
-        .alert-warning {
-            background-color: #fffbeb;
-            border-color: var(--warning-color);
-            color: #d97706;
-        }
-        
-        .alert-info {
-            background-color: #eff6ff;
-            border-color: var(--info-color);
-            color: #2563eb;
-        }
-        
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            animation: fadeIn 0.2s ease;
-        }
-        
-        .modal-content {
-            position: relative;
-            background-color: #fff;
-            margin: 10vh auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            animation: slideIn 0.3s ease;
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--secondary-color);
-        }
-        
-        .modal-close:hover {
-            color: var(--primary-color);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        /* Utilities */
-        .d-flex {
-            display: flex;
-        }
-        
-        .justify-content-between {
-            justify-content: space-between;
-        }
-        
-        .align-items-center {
-            align-items: center;
-        }
-        
-        .text-center {
-            text-align: center;
-        }
-        
-        .mb-3 {
-            margin-bottom: 15px;
-        }
-        
-        .mt-3 {
-            margin-top: 15px;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        /* Tree view */
-        .tree-view {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        
-        .tree-item {
-            margin: 0;
-            padding: 0;
-        }
-        
-        .tree-item-content {
-            display: flex;
-            align-items: center;
-            padding: 8px 5px;
-            border-radius: 4px;
-        }
-        
-        .tree-item-content:hover {
-            background-color: #f8fafc;
-        }
-        
-        .tree-toggle {
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-        
-        .tree-label {
-            flex: 1;
-            display: flex;
-            align-items: center;
-        }
-        
-        .tree-icon {
-            margin-right: 5px;
-            color: var(--secondary-color);
-        }
-        
-        .tree-children {
-            margin-left: 25px;
-            border-left: 1px solid var(--border-color);
-            padding-left: 10px;
-        }
-        
-        /* Tab navigation */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            background-color: #f8fafc;
-            border-radius: 8px 8px 0 0;
-            overflow: hidden;
-        }
-        
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--secondary-color);
-            background-color: transparent;
-            border: none;
-            transition: all 0.2s ease;
-        }
-        
-        .tab.active {
-            color: var(--primary-color);
-            background-color: #fff;
-            border-bottom: 2px solid var(--primary-color);
-        }
-        
-        .tab:hover:not(.active) {
-            background-color: rgba(59, 130, 246, 0.05);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Footer */
-        .footer {
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            color: var(--secondary-color);
-            font-size: 0.875rem;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .layout {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
 </head>
 <body>
-    <div class="layout">
+    <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <span>Access Control</span>
+                <div class="logo">
+                    <i data-feather="shield"></i>
+                    <span>Access Control</span>
+                </div>
+                <button class="sidebar-toggle">
+                    <i data-feather="menu"></i>
+                </button>
             </div>
-            <div class="sidebar-content">
-                <ul class="sidebar-nav" id="customNavbar">
-                    <li class="sidebar-nav-item">
-                        <a href="/configuration/" class="sidebar-nav-link" data-page="configuration">
-                            <i data-feather="settings" class="sidebar-nav-icon"></i>
-                            <span>Configuration</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-nav-item">
-                        <a href="/" class="sidebar-nav-link" data-page="dashboard">
-                            <i data-feather="grid" class="sidebar-nav-icon"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-nav-item">
-                        <a href="/organisations/" class="sidebar-nav-link" data-page="organizations">
-                            <i data-feather="briefcase" class="sidebar-nav-icon"></i>
-                            <span>Organizations</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-nav-item">
-                        <a href="/users/" class="sidebar-nav-link" data-page="users">
-                            <i data-feather="users" class="sidebar-nav-icon"></i>
-                            <span>Users</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-nav-item">
-                        <a href="/permissions/" class="sidebar-nav-link" data-page="permissions">
-                            <i data-feather="shield" class="sidebar-nav-icon"></i>
-                            <span>Permissions</span>
-                        </a>
-                    </li>
-                </ul>
+            
+            <nav class="sidebar-nav">
+                <a href="/" class="sidebar-nav-link" data-page="dashboard">
+                    <i data-feather="grid" class="sidebar-nav-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/organisations/" class="sidebar-nav-link" data-page="organisations">
+                    <i data-feather="briefcase" class="sidebar-nav-icon"></i>
+                    <span>Organizations</span>
+                </a>
+                <a href="/location_hierarchy/" class="sidebar-nav-link" data-page="location_hierarchy">
+                    <i data-feather="map-pin" class="sidebar-nav-icon"></i>
+                    <span>Location Hierarchy</span>
+                </a>
+                <a href="/users/" class="sidebar-nav-link" data-page="users">
+                    <i data-feather="users" class="sidebar-nav-icon"></i>
+                    <span>Users</span>
+                </a>
+                <a href="/permissions/" class="sidebar-nav-link" data-page="permissions">
+                    <i data-feather="shield" class="sidebar-nav-icon"></i>
+                    <span>Permissions</span>
+                </a>
+                <a href="/configuration/" class="sidebar-nav-link" data-page="configuration">
+                    <i data-feather="settings" class="sidebar-nav-icon"></i>
+                    <span>Configuration</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-details">
+                        <div class="user-name">John Doe</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <button class="btn-icon" title="Settings">
+                        <i data-feather="settings"></i>
+                    </button>
+                    <button class="btn-icon" title="Logout">
+                        <i data-feather="log-out"></i>
+                    </button>
+                </div>
             </div>
         </aside>
         
-        <div class="main-content">
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
             <header class="header">
-                <div class="header-title">
-                    {% block header_title %}Access Control System{% endblock %}
+                <div class="header-content">
+                    <h1 class="header-title">{% block header_title %}Dashboard{% endblock %}</h1>
+                    <div class="breadcrumb">
+                        {% block breadcrumb_items %}
+                        <div class="breadcrumb-item">
+                            <a href="/" class="breadcrumb-link">Home</a>
+                        </div>
+                        <div class="breadcrumb-item">Dashboard</div>
+                        {% endblock %}
+                    </div>
                 </div>
-                <div class="user-info">
-                    <span class="user-name">John Doe</span>
-                    <div class="user-avatar">JD</div>
+                <div class="header-actions">
+                    <button class="btn-icon" title="Notifications">
+                        <i data-feather="bell"></i>
+                    </button>
+                    <button class="btn-icon" title="Help">
+                        <i data-feather="help-circle"></i>
+                    </button>
                 </div>
             </header>
             
-            <main class="content">
-                {% block breadcrumbs %}
-                <div class="breadcrumbs">
-                    <div class="breadcrumb-item">
-                        <a href="/" class="breadcrumb-link">Home</a>
-                    </div>
-                    {% block breadcrumb_items %}{% endblock %}
-                </div>
-                {% endblock %}
-                
-                {% block page_header %}
+            <!-- Page Content -->
+            <div class="page-content">
                 <div class="page-header">
-                    <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
-                    <p class="page-description">{% block page_description %}{% endblock %}</p>
+                    <div class="page-title-section">
+                        <h2 class="page-title">{% block page_title %}Dashboard{% endblock %}</h2>
+                        <p class="page-description">{% block page_description %}Overview of your system{% endblock %}</p>
+                    </div>
                 </div>
-                {% endblock %}
                 
-                {% block content %}{% endblock %}
-            </main>
-            
-            <footer class="footer">
-                <p>&copy; 2025 Access Control System</p>
-            </footer>
-        </div>
+                <div class="content-container">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </main>
     </div>
     
+    <!-- Modal Container -->
+    <div class="modal-container"></div>
+    
+    <!-- Common JavaScript -->
     <script>
-        // DOM ready function
+        // Initialize Feather Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+            
+            // Sidebar toggle for mobile
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    document.querySelector('.app-container').classList.toggle('sidebar-collapsed');
+                });
+            }
+            
+            // Set active link in sidebar
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath !== '/' && link.getAttribute('href') !== '/' && currentPath.includes(link.getAttribute('href'))) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Helper functions
+        const Helpers = {
+            /**
+             * Shows an alert message
+             * @param {string} message - Message to display
+             * @param {string} type - Alert type (success, danger, warning)
+             * @param {HTMLElement} container - Container to append the alert to
+             */
+            showAlert: function(message, type = 'success', container = document.body) {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type}`;
+                alert.innerHTML = `
+                    <div class="alert-content">
+                        <div class="alert-icon">
+                            <i data-feather="${type === 'success' ? 'check-circle' : type === 'danger' ? 'alert-circle' : 'alert-triangle'}"></i>
+                        </div>
+                        <div class="alert-message">${message}</div>
+                    </div>
+                    <button class="alert-close">&times;</button>
+                `;
+                
+                container.prepend(alert);
+                
+                // Initialize icons
+                feather.replace();
+                
+                // Add close button event
+                alert.querySelector('.alert-close').addEventListener('click', () => {
+                    alert.remove();
+                });
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.classList.add('alert-fade-out');
+                        setTimeout(() => {
+                            if (alert.parentNode) {
+                                alert.remove();
+                            }
+                        }, 500);
+                    }
+                }, 5000);
+            },
+            
+            /**
+             * Shows a loading overlay
+             * @param {string} message - Loading message to display
+             */
+            showLoading: function(message = 'Loading...') {
+                const loading = document.createElement('div');
+                loading.className = 'loading-overlay';
+                loading.innerHTML = `
+                    <div class="loading-content">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-message">${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(loading);
+                document.body.classList.add('loading');
+            },
+            
+            /**
+             * Hides the loading overlay
+             */
+            hideLoading: function() {
+                const loading = document.querySelector('.loading-overlay');
+                if (loading) {
+                    loading.remove();
+                    document.body.classList.remove('loading');
+                }
+            },
+            
+            /**
+             * Makes an API request
+             * @param {string} url - API endpoint
+             * @param {Object} options - Fetch options
+             * @returns {Promise} - Fetch promise
+             */
+            fetchAPI: async function(url, options = {}) {
+                const defaultOptions = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    }
+                };
+                
+                const fetchOptions = {...defaultOptions, ...options};
+                
+                try {
+                    const response = await fetch(url, fetchOptions);
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => null);
+                        throw new Error(errorData?.message || `HTTP Error: ${response.status}`);
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Error:', error);
+                    throw error;
+                }
+            },
+            
+            /**
+             * Gets the CSRF token from cookies
+             * @returns {string} - CSRF token
+             */
+            getCsrfToken: function() {
+                const name = 'csrftoken';
+                const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+                return cookieValue ? cookieValue.pop() : '';
+            },
+            
+            /**
+             * Validates a form
+             * @param {HTMLFormElement} form - Form to validate
+             * @returns {boolean} - Whether the form is valid
+             */
+            validateForm: function(form) {
+                let isValid = true;
+                
+                // Remove existing validation messages
+                form.querySelectorAll('.validation-message').forEach(el => el.remove());
+                form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                
+                // Check each required field
+                form.querySelectorAll('[required]').forEach(field => {
+                    if (!field.value.trim()) {
+                        this.addValidationMessage(field, 'This field is required');
+                        isValid = false;
+                    }
+                });
+                
+                // Check email fields
+                form.querySelectorAll('input[type="email"]').forEach(field => {
+                    if (field.value.trim() && !this.isValidEmail(field.value)) {
+                        this.addValidationMessage(field, 'Please enter a valid email address');
+                        isValid = false;
+                    }
+                });
+                
+                return isValid;
+            },
+            
+            /**
+             * Adds a validation message to a field
+             * @param {HTMLElement} field - Field to add validation message to
+             * @param {string} message - Validation message
+             */
+            addValidationMessage: function(field, message) {
+                field.classList.add('is-invalid');
+                
+                const validationMessage = document.createElement('div');
+                validationMessage.className = 'validation-message';
+                validationMessage.textContent = message;
+                
+                field.parentNode.appendChild(validationMessage);
+            },
+            
+            /**
+             * Checks if an email is valid
+             * @param {string} email - Email to check
+             * @returns {boolean} - Whether the email is valid
+             */
+            isValidEmail: function(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            },
+            
+            /**
+             * Formats a date
+             * @param {string} dateString - Date string
+             * @returns {string} - Formatted date
+             */
+            formatDate: function(dateString) {
+                const date = new Date(dateString);
+                return new Intl.DateTimeFormat('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                }).format(date);
+            }
+        };
+        
+        // DOM ready handler helper
         function onDOMReady(callback) {
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', callback);
@@ -670,69 +335,6 @@
                 callback();
             }
         }
-
-        // Common utility functions
-        const Helpers = {
-            showAlert: function(message, type = 'success', container) {
-                const alertElement = document.createElement('div');
-                alertElement.className = `alert alert-${type}`;
-                alertElement.textContent = message;
-                
-                // Add a close button
-                const closeButton = document.createElement('button');
-                closeButton.innerHTML = '&times;';
-                closeButton.className = 'close';
-                closeButton.style.float = 'right';
-                closeButton.style.border = 'none';
-                closeButton.style.background = 'none';
-                closeButton.style.fontSize = '1.25rem';
-                closeButton.style.cursor = 'pointer';
-                closeButton.onclick = function() {
-                    alertElement.remove();
-                };
-                
-                alertElement.prepend(closeButton);
-                
-                // Auto-remove after 5 seconds for success messages
-                if (type === 'success') {
-                    setTimeout(() => {
-                        alertElement.remove();
-                    }, 5000);
-                }
-                
-                // Insert at the top of the container
-                container.prepend(alertElement);
-            },
-            
-            getCsrfToken: function() {
-                return document.cookie.split('; ')
-                    .find(row => row.startsWith('csrftoken='))
-                    ?.split('=')[1] || '';
-            },
-            
-            formatDate: function(dateString) {
-                if (!dateString) return 'N/A';
-                const date = new Date(dateString);
-                return date.toLocaleDateString();
-            }
-        };
-        
-        // Initialize icons and navigation
-        onDOMReady(() => {
-            if(typeof feather !== 'undefined') {
-                feather.replace();
-            }
-            
-            // Add active class to current nav item
-            const currentPath = window.location.pathname;
-            document.querySelectorAll('.sidebar-nav-link').forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                } else if (currentPath.includes(link.getAttribute('href')) && link.getAttribute('href') !== '/') {
-                    link.classList.add('active');
-                }
-            });
-        });
     </script>
     
     {% block extra_js %}{% endblock %}

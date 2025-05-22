@@ -3,188 +3,78 @@
 {% block title %}Configuration - Access Control System{% endblock %}
 {% block header_title %}Configuration{% endblock %}
 
-{% block breadcrumb_items %}
-<div class="breadcrumb-item">
-    <a href="/" class="breadcrumb-link">Home</a>
-</div>
-<div class="breadcrumb-item">Configuration</div>
-{% endblock %}
-
-{% block page_title %}Configuration{% endblock %}
-{% block page_description %}Customize UI components, navigation, and system appearance{% endblock %}
-
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div></div>
-    <div>
-        <button id="resetBtn" class="btn btn-secondary">Reset to Defaults</button>
-        <button id="saveConfigBtn" class="btn btn-primary">
-            <i data-feather="save" class="btn-icon"></i> Save Changes
-        </button>
+<div class="content-wrapper">
+    <div class="header-actions">
+        <h2 class="content-title">Configuration</h2>
+        <div>
+            <button id="resetBtn" class="btn btn-outline-secondary">Reset to Defaults</button>
+            <button id="saveConfigBtn" class="btn btn-primary">
+                <i data-feather="save"></i> Save Changes
+            </button>
+        </div>
     </div>
-</div>
 
-<div class="card">
-    <div class="card-header">
-        <div class="tabs">
-            <button class="tab active" data-tab="navigation">Navigation</button>
-            <button class="tab" data-tab="appearance">Appearance</button>
-            <button class="tab" data-tab="layout">Layout</button>
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav-tabs">
+                <li class="nav-item">
+                    <button class="nav-link active" data-tab="navigation">Navigation</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="appearance">Appearance</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="layout">Layout</button>
+                </li>
+            </ul>
         </div>
-    </div>
-    <div class="card-body">
-        <!-- Navigation Tab -->
-        <div class="tab-content active" id="navigation-tab">
-            <h3 class="mb-3">Navigation Configuration</h3>
-            <p class="mb-3">Customize the labels and sequence of navigation items</p>
-            
-            <div id="navigation-items">
-                <div class="navigation-item" data-id="configuration">
-                    <div class="handle">
-                        <i data-feather="menu"></i>
-                    </div>
-                    <div class="nav-details">
-                        <div class="nav-default">
-                            <span class="nav-label">Default Label</span>
-                            <span class="nav-value">Configuration</span>
-                        </div>
-                        <div class="nav-custom">
-                            <span class="nav-label">Custom Label</span>
-                            <input type="text" class="form-control custom-label-input" value="Configuration" data-original="Configuration">
-                        </div>
-                    </div>
-                    <div class="nav-actions">
-                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
-                            <i data-feather="arrow-up"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
-                            <i data-feather="arrow-down"></i>
-                        </button>
-                    </div>
+        <div class="card-body">
+            <!-- Navigation Tab -->
+            <div class="tab-content active" id="navigation-tab">
+                <div class="section-header">
+                    <h3>Navigation Configuration</h3>
+                    <p>Customize the labels and sequence of navigation items in the sidebar</p>
                 </div>
-                
-                <div class="navigation-item" data-id="dashboard">
-                    <div class="handle">
-                        <i data-feather="menu"></i>
-                    </div>
-                    <div class="nav-details">
-                        <div class="nav-default">
-                            <span class="nav-label">Default Label</span>
-                            <span class="nav-value">Dashboard</span>
-                        </div>
-                        <div class="nav-custom">
-                            <span class="nav-label">Custom Label</span>
-                            <input type="text" class="form-control custom-label-input" value="Dashboard" data-original="Dashboard">
-                        </div>
-                    </div>
-                    <div class="nav-actions">
-                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
-                            <i data-feather="arrow-up"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
-                            <i data-feather="arrow-down"></i>
-                        </button>
-                    </div>
+
+                <div id="navigationItems" class="sortable-list">
+                    <!-- Navigation items will be rendered here -->
                 </div>
-                
-                <div class="navigation-item" data-id="organizations">
-                    <div class="handle">
-                        <i data-feather="menu"></i>
-                    </div>
-                    <div class="nav-details">
-                        <div class="nav-default">
-                            <span class="nav-label">Default Label</span>
-                            <span class="nav-value">Organizations</span>
+
+                <div class="preview-section">
+                    <h4>Navigation Preview</h4>
+                    <div class="sidebar-preview">
+                        <div class="sidebar-preview-header">Sidebar Navigation</div>
+                        <div id="navigationPreview" class="sidebar-preview-items">
+                            <!-- Preview will be rendered here -->
                         </div>
-                        <div class="nav-custom">
-                            <span class="nav-label">Custom Label</span>
-                            <input type="text" class="form-control custom-label-input" value="Organizations" data-original="Organizations">
-                        </div>
-                    </div>
-                    <div class="nav-actions">
-                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
-                            <i data-feather="arrow-up"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
-                            <i data-feather="arrow-down"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="navigation-item" data-id="users">
-                    <div class="handle">
-                        <i data-feather="menu"></i>
-                    </div>
-                    <div class="nav-details">
-                        <div class="nav-default">
-                            <span class="nav-label">Default Label</span>
-                            <span class="nav-value">Users</span>
-                        </div>
-                        <div class="nav-custom">
-                            <span class="nav-label">Custom Label</span>
-                            <input type="text" class="form-control custom-label-input" value="Users" data-original="Users">
-                        </div>
-                    </div>
-                    <div class="nav-actions">
-                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
-                            <i data-feather="arrow-up"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
-                            <i data-feather="arrow-down"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="navigation-item" data-id="permissions">
-                    <div class="handle">
-                        <i data-feather="menu"></i>
-                    </div>
-                    <div class="nav-details">
-                        <div class="nav-default">
-                            <span class="nav-label">Default Label</span>
-                            <span class="nav-value">Permissions</span>
-                        </div>
-                        <div class="nav-custom">
-                            <span class="nav-label">Custom Label</span>
-                            <input type="text" class="form-control custom-label-input" value="Permissions" data-original="Permissions">
-                        </div>
-                    </div>
-                    <div class="nav-actions">
-                        <button class="btn btn-sm btn-outline-secondary move-up-btn">
-                            <i data-feather="arrow-up"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary move-down-btn">
-                            <i data-feather="arrow-down"></i>
-                        </button>
                     </div>
                 </div>
             </div>
-            
-            <div class="navigation-preview mt-3">
-                <h4>Navigation Preview</h4>
-                <div class="sidebar-preview">
-                    <div class="sidebar-preview-header">Sidebar Navigation</div>
-                    <div id="preview-nav" class="sidebar-preview-items">
-                        <!-- Preview items will be inserted here -->
-                    </div>
+
+            <!-- Appearance Tab -->
+            <div class="tab-content" id="appearance-tab">
+                <div class="section-header">
+                    <h3>Appearance Settings</h3>
+                    <p>Customize the visual appearance of the application</p>
+                </div>
+                <div class="coming-soon">
+                    <i data-feather="alert-circle"></i>
+                    <p>This feature will be available in a future update.</p>
                 </div>
             </div>
-        </div>
-        
-        <!-- Appearance Tab -->
-        <div class="tab-content" id="appearance-tab">
-            <h3 class="mb-3">Appearance Settings</h3>
-            <p class="mb-3">Customize the visual appearance of the application</p>
-            
-            <p>This tab will be implemented in a future update.</p>
-        </div>
-        
-        <!-- Layout Tab -->
-        <div class="tab-content" id="layout-tab">
-            <h3 class="mb-3">Layout Settings</h3>
-            <p class="mb-3">Customize the layout of components and pages</p>
-            
-            <p>This tab will be implemented in a future update.</p>
+
+            <!-- Layout Tab -->
+            <div class="tab-content" id="layout-tab">
+                <div class="section-header">
+                    <h3>Layout Settings</h3>
+                    <p>Customize the layout of components and pages</p>
+                </div>
+                <div class="coming-soon">
+                    <i data-feather="alert-circle"></i>
+                    <p>This feature will be available in a future update.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -192,54 +82,43 @@
 
 {% block extra_js %}
 <script>
-    let navigationItems = [];
+    // Default navigation items
+    const defaultNavItems = [
+        { id: 'dashboard', defaultLabel: 'Dashboard', customLabel: 'Dashboard', icon: 'grid' },
+        { id: 'organisations', defaultLabel: 'Organizations', customLabel: 'Organizations', icon: 'briefcase' },
+        { id: 'users', defaultLabel: 'Users', customLabel: 'Users', icon: 'users' },
+        { id: 'location_hierarchy', defaultLabel: 'Location Hierarchy', customLabel: 'Location Hierarchy', icon: 'map-pin' },
+        { id: 'permissions', defaultLabel: 'Permissions', customLabel: 'Permissions', icon: 'shield' },
+        { id: 'configuration', defaultLabel: 'Configuration', customLabel: 'Configuration', icon: 'settings' }
+    ];
     
+    // Current navigation items
+    let navItems = [];
+    
+    // DOM Ready handler
     onDOMReady(() => {
-        // Initialize tabs
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs and tab contents
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        // Initialize tab navigation
+        document.querySelectorAll('.nav-link').forEach(tabLink => {
+            tabLink.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
                 
-                // Add active class to clicked tab and corresponding content
-                tab.classList.add('active');
-                const tabId = tab.dataset.tab + '-tab';
+                // Add active class to clicked tab
+                tabLink.classList.add('active');
+                const tabId = tabLink.dataset.tab + '-tab';
                 document.getElementById(tabId).classList.add('active');
             });
         });
         
-        // Initialize navigation items from current DOM state
-        navigationItems = Array.from(document.querySelectorAll('.navigation-item')).map(item => {
-            return {
-                id: item.dataset.id,
-                defaultLabel: item.querySelector('.nav-value').textContent,
-                customLabel: item.querySelector('.custom-label-input').value
-            };
-        });
+        // Load navigation configuration
+        loadNavigationConfig();
         
-        // Render the navigation preview
-        renderNavigationPreview();
-        
-        // Setup event listeners for move up/down buttons
-        document.querySelectorAll('.move-up-btn').forEach(btn => {
-            btn.addEventListener('click', handleMoveUp);
-        });
-        
-        document.querySelectorAll('.move-down-btn').forEach(btn => {
-            btn.addEventListener('click', handleMoveDown);
-        });
-        
-        // Setup event listeners for custom label inputs
-        document.querySelectorAll('.custom-label-input').forEach(input => {
-            input.addEventListener('input', updateNavigationPreview);
-        });
-        
-        // Setup save button
+        // Save button
         document.getElementById('saveConfigBtn').addEventListener('click', saveConfiguration);
         
-        // Setup reset button
-        document.getElementById('resetBtn').addEventListener('click', resetConfiguration);
+        // Reset button
+        document.getElementById('resetBtn').addEventListener('click', resetToDefaults);
         
         // Initialize feather icons
         if (typeof feather !== 'undefined') {
@@ -247,250 +126,622 @@
         }
     });
     
-    function renderNavigationPreview() {
-        const previewNav = document.getElementById('preview-nav');
-        previewNav.innerHTML = '';
+    // Load navigation configuration
+    function loadNavigationConfig() {
+        try {
+            // Try to load from localStorage first (for demo purposes)
+            const savedConfig = localStorage.getItem('navConfig');
+            if (savedConfig) {
+                navItems = JSON.parse(savedConfig);
+            } else {
+                // Otherwise use default config
+                navItems = JSON.parse(JSON.stringify(defaultNavItems));
+            }
+        } catch (error) {
+            console.error('Error loading configuration:', error);
+            navItems = JSON.parse(JSON.stringify(defaultNavItems));
+        }
         
-        // Get the current order and labels
-        const items = Array.from(document.querySelectorAll('.navigation-item')).map(item => {
-            return {
-                id: item.dataset.id,
-                label: item.querySelector('.custom-label-input').value
-            };
-        });
+        renderNavigationItems();
+        renderNavigationPreview();
+    }
+    
+    // Render navigation items in the configuration form
+    function renderNavigationItems() {
+        const container = document.getElementById('navigationItems');
+        container.innerHTML = '';
         
-        // Create preview items
-        items.forEach(item => {
-            const previewItem = document.createElement('div');
-            previewItem.className = 'sidebar-preview-item';
+        navItems.forEach((item, index) => {
+            const navItem = document.createElement('div');
+            navItem.className = 'nav-item-config';
+            navItem.dataset.id = item.id;
             
-            let icon = '';
-            if (item.id === 'configuration') icon = 'settings';
-            else if (item.id === 'dashboard') icon = 'grid';
-            else if (item.id === 'organizations') icon = 'briefcase';
-            else if (item.id === 'users') icon = 'users';
-            else if (item.id === 'permissions') icon = 'shield';
-            
-            previewItem.innerHTML = `
-                <i data-feather="${icon}" class="sidebar-preview-icon"></i>
-                <span>${item.label}</span>
+            navItem.innerHTML = `
+                <div class="drag-handle">
+                    <i data-feather="menu"></i>
+                </div>
+                <div class="nav-item-details">
+                    <div class="nav-item-info">
+                        <div class="nav-item-icon">
+                            <i data-feather="${item.icon}"></i>
+                        </div>
+                        <div class="nav-item-labels">
+                            <div class="nav-item-default">
+                                <span class="label-caption">Default Label:</span>
+                                <span class="label-value">${item.defaultLabel}</span>
+                            </div>
+                            <div class="nav-item-custom">
+                                <span class="label-caption">Custom Label:</span>
+                                <input type="text" class="form-control custom-label" 
+                                    value="${item.customLabel}" 
+                                    data-id="${item.id}" 
+                                    data-default="${item.defaultLabel}"
+                                    oninput="updateNavigationPreview()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item-actions">
+                    <button class="btn btn-sm btn-icon move-up-btn" title="Move Up" ${index === 0 ? 'disabled' : ''}>
+                        <i data-feather="arrow-up"></i>
+                    </button>
+                    <button class="btn btn-sm btn-icon move-down-btn" title="Move Down" ${index === navItems.length - 1 ? 'disabled' : ''}>
+                        <i data-feather="arrow-down"></i>
+                    </button>
+                </div>
             `;
             
-            previewNav.appendChild(previewItem);
+            container.appendChild(navItem);
         });
         
-        // Re-initialize feather icons
+        // Initialize feather icons
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
+        
+        // Add event listeners for move up/down buttons
+        document.querySelectorAll('.move-up-btn').forEach(btn => {
+            if (!btn.disabled) {
+                btn.addEventListener('click', moveItemUp);
+            }
+        });
+        
+        document.querySelectorAll('.move-down-btn').forEach(btn => {
+            if (!btn.disabled) {
+                btn.addEventListener('click', moveItemDown);
+            }
+        });
+        
+        // Enable drag and drop reordering
+        enableDragDrop();
     }
     
-    function handleMoveUp(event) {
-        const item = event.target.closest('.navigation-item');
-        const prevItem = item.previousElementSibling;
+    // Render navigation preview
+    function renderNavigationPreview() {
+        const container = document.getElementById('navigationPreview');
+        container.innerHTML = '';
         
-        if (prevItem) {
-            item.parentNode.insertBefore(item, prevItem);
-            updateNavigationPreview();
-        }
-    }
-    
-    function handleMoveDown(event) {
-        const item = event.target.closest('.navigation-item');
-        const nextItem = item.nextElementSibling;
-        
-        if (nextItem) {
-            item.parentNode.insertBefore(nextItem, item);
-            updateNavigationPreview();
-        }
-    }
-    
-    function updateNavigationPreview() {
-        renderNavigationPreview();
-        
-        // Update actual sidebar navigation
-        const sidebar = document.querySelector('.sidebar-nav');
-        if (sidebar) {
-            const items = Array.from(document.querySelectorAll('.navigation-item')).map(item => {
-                return {
-                    id: item.dataset.id,
-                    label: item.querySelector('.custom-label-input').value
-                };
-            });
+        navItems.forEach(item => {
+            const navItem = document.createElement('div');
+            navItem.className = 'sidebar-preview-item';
             
-            const sidebarItems = sidebar.querySelectorAll('.sidebar-nav-item');
-            items.forEach((item, index) => {
-                if (sidebarItems[index]) {
-                    const link = sidebarItems[index].querySelector('.sidebar-nav-link');
-                    const span = link.querySelector('span');
-                    if (span) {
-                        span.textContent = item.label;
+            navItem.innerHTML = `
+                <i data-feather="${item.icon}" class="sidebar-preview-icon"></i>
+                <span>${item.customLabel}</span>
+            `;
+            
+            container.appendChild(navItem);
+        });
+        
+        // Initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        
+        // Apply changes to actual sidebar (for demo)
+        updateActualSidebar();
+    }
+    
+    // Update the navigation preview when custom labels change
+    function updateNavigationPreview() {
+        // Update navItems with current custom labels
+        document.querySelectorAll('.custom-label').forEach(input => {
+            const id = input.dataset.id;
+            const value = input.value.trim();
+            
+            const itemIndex = navItems.findIndex(item => item.id === id);
+            if (itemIndex !== -1) {
+                navItems[itemIndex].customLabel = value || navItems[itemIndex].defaultLabel;
+            }
+        });
+        
+        renderNavigationPreview();
+    }
+    
+    // Move an item up in the list
+    function moveItemUp(event) {
+        const item = event.target.closest('.nav-item-config');
+        const id = item.dataset.id;
+        const index = navItems.findIndex(navItem => navItem.id === id);
+        
+        if (index > 0) {
+            // Swap items in the array
+            [navItems[index - 1], navItems[index]] = [navItems[index], navItems[index - 1]];
+            
+            // Re-render
+            renderNavigationItems();
+            renderNavigationPreview();
+        }
+    }
+    
+    // Move an item down in the list
+    function moveItemDown(event) {
+        const item = event.target.closest('.nav-item-config');
+        const id = item.dataset.id;
+        const index = navItems.findIndex(navItem => navItem.id === id);
+        
+        if (index < navItems.length - 1) {
+            // Swap items in the array
+            [navItems[index], navItems[index + 1]] = [navItems[index + 1], navItems[index]];
+            
+            // Re-render
+            renderNavigationItems();
+            renderNavigationPreview();
+        }
+    }
+    
+    // Enable drag and drop reordering
+    function enableDragDrop() {
+        const container = document.getElementById('navigationItems');
+        const items = container.querySelectorAll('.nav-item-config');
+        
+        items.forEach(item => {
+            const dragHandle = item.querySelector('.drag-handle');
+            
+            dragHandle.addEventListener('mousedown', function(e) {
+                // Prevent text selection during drag
+                e.preventDefault();
+                
+                const startY = e.clientY;
+                const itemHeight = item.offsetHeight;
+                const itemIndex = Array.from(container.children).indexOf(item);
+                let currentIndex = itemIndex;
+                
+                // Create a placeholder
+                const placeholder = document.createElement('div');
+                placeholder.className = 'nav-item-placeholder';
+                placeholder.style.height = itemHeight + 'px';
+                
+                // Create a floating copy of the item
+                const floatingItem = item.cloneNode(true);
+                floatingItem.className = 'nav-item-config floating';
+                floatingItem.style.width = item.offsetWidth + 'px';
+                floatingItem.style.height = itemHeight + 'px';
+                floatingItem.style.top = item.offsetTop + 'px';
+                floatingItem.style.left = item.offsetLeft + 'px';
+                
+                // Replace the item with the placeholder
+                container.insertBefore(placeholder, item);
+                container.removeChild(item);
+                document.body.appendChild(floatingItem);
+                
+                // Mouse move handler
+                function onMouseMove(e) {
+                    const deltaY = e.clientY - startY;
+                    floatingItem.style.transform = `translateY(${deltaY}px)`;
+                    
+                    // Check if we need to move the placeholder
+                    const floatingRect = floatingItem.getBoundingClientRect();
+                    const middleY = floatingRect.top + floatingRect.height / 2;
+                    
+                    // Find the item we're hovering over
+                    const siblings = Array.from(container.children);
+                    let newIndex = currentIndex;
+                    
+                    for (let i = 0; i < siblings.length; i++) {
+                        if (i === currentIndex) continue;
+                        
+                        const siblingRect = siblings[i].getBoundingClientRect();
+                        const siblingMiddleY = siblingRect.top + siblingRect.height / 2;
+                        
+                        if ((i < currentIndex && middleY < siblingMiddleY) || 
+                            (i > currentIndex && middleY > siblingMiddleY)) {
+                            newIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    if (newIndex !== currentIndex) {
+                        // Move the placeholder
+                        container.removeChild(placeholder);
+                        
+                        if (newIndex < siblings.length) {
+                            container.insertBefore(placeholder, siblings[newIndex]);
+                        } else {
+                            container.appendChild(placeholder);
+                        }
+                        
+                        currentIndex = newIndex;
                     }
                 }
+                
+                // Mouse up handler
+                function onMouseUp() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                    
+                    // Remove the floating item
+                    document.body.removeChild(floatingItem);
+                    
+                    // Replace the placeholder with the original item
+                    container.replaceChild(item, placeholder);
+                    
+                    // Update the navItems array
+                    const newItems = [];
+                    
+                    Array.from(container.children).forEach(child => {
+                        const id = child.dataset.id;
+                        const navItem = navItems.find(item => item.id === id);
+                        if (navItem) {
+                            newItems.push(navItem);
+                        }
+                    });
+                    
+                    navItems = newItems;
+                    
+                    // Re-render
+                    renderNavigationItems();
+                    renderNavigationPreview();
+                }
+                
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
             });
-        }
+        });
     }
     
-    async function saveConfiguration() {
-        // Get configuration data
-        const configData = {
-            navigation: Array.from(document.querySelectorAll('.navigation-item')).map((item, index) => {
-                return {
-                    id: item.dataset.id,
-                    order: index,
-                    defaultLabel: item.querySelector('.nav-value').textContent,
-                    customLabel: item.querySelector('.custom-label-input').value
-                };
-            })
-        };
+    // Update the actual sidebar (for demo purposes)
+    function updateActualSidebar() {
+        const sidebar = document.querySelector('.sidebar-nav');
+        if (!sidebar) return;
         
+        // Clear existing items
+        sidebar.innerHTML = '';
+        
+        // Add items in the new order with custom labels
+        navItems.forEach(item => {
+            const navItem = document.createElement('li');
+            navItem.className = 'sidebar-nav-item';
+            
+            navItem.innerHTML = `
+                <a href="/${item.id === 'dashboard' ? '' : item.id + '/'}" class="sidebar-nav-link" data-page="${item.id}">
+                    <i data-feather="${item.icon}" class="sidebar-nav-icon"></i>
+                    <span>${item.customLabel}</span>
+                </a>
+            `;
+            
+            sidebar.appendChild(navItem);
+        });
+        
+        // Initialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        
+        // Add active class to current page
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            } else if (currentPath.includes(link.getAttribute('href')) && link.getAttribute('href') !== '/') {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    // Save the configuration
+    function saveConfiguration() {
         try {
-            // In a real implementation, you would save this to the server
-            // const response = await fetch('/configuration/save/', {
+            // In a real application, this would be an API call
+            // const response = await fetch('/api/configuration/navigation', {
             //     method: 'POST',
             //     headers: {
             //         'Content-Type': 'application/json',
             //         'X-CSRFToken': Helpers.getCsrfToken()
             //     },
-            //     body: JSON.stringify(configData)
+            //     body: JSON.stringify(navItems)
             // });
             
-            // For demo purposes, simulate success
-            console.log('Configuration saved:', configData);
+            // For demo purposes, save to localStorage
+            localStorage.setItem('navConfig', JSON.stringify(navItems));
             
             // Show success message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert('Configuration saved successfully', 'success', container);
-            
-            // Save to localStorage for demo persistence
-            localStorage.setItem('accessControlConfig', JSON.stringify(configData));
+            Helpers.showAlert('Configuration saved successfully. Navigation has been updated.', 'success', container);
         } catch (error) {
             console.error('Error saving configuration:', error);
             
             // Show error message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert('Error saving configuration. Please try again.', 'danger', container);
+            Helpers.showAlert('Failed to save configuration. Please try again.', 'danger', container);
         }
     }
     
-    function resetConfiguration() {
-        // Reset custom labels to default values
-        document.querySelectorAll('.navigation-item').forEach(item => {
-            const input = item.querySelector('.custom-label-input');
-            input.value = input.dataset.original;
-        });
-        
-        // Reset order to default
-        const container = document.getElementById('navigation-items');
-        const items = Array.from(container.querySelectorAll('.navigation-item'));
-        
-        // Sort items by their IDs to restore default order
-        const defaultOrder = ['configuration', 'dashboard', 'organizations', 'users', 'permissions'];
-        items.sort((a, b) => {
-            return defaultOrder.indexOf(a.dataset.id) - defaultOrder.indexOf(b.dataset.id);
-        });
-        
-        // Clear container and re-append items in default order
-        container.innerHTML = '';
-        items.forEach(item => container.appendChild(item));
-        
-        // Update preview
-        updateNavigationPreview();
-        
-        // Show success message
-        const alertContainer = document.querySelector('.card-body');
-        Helpers.showAlert('Configuration reset to defaults', 'success', alertContainer);
+    // Reset to default configuration
+    function resetToDefaults() {
+        // Reset navigation items
+        navItems = JSON.parse(JSON.stringify(defaultNavItems));
         
         // Remove from localStorage
-        localStorage.removeItem('accessControlConfig');
+        localStorage.removeItem('navConfig');
+        
+        // Re-render
+        renderNavigationItems();
+        renderNavigationPreview();
+        
+        // Show success message
+        const container = document.querySelector('.card-body');
+        Helpers.showAlert('Configuration reset to defaults.', 'success', container);
     }
 </script>
 
 <style>
-    .navigation-item {
+    .content-wrapper {
+        width: 100%;
+    }
+    
+    .header-actions {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        padding: 15px;
-        background-color: #fff;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        margin-bottom: 10px;
+        margin-bottom: 1rem;
     }
     
-    .handle {
-        cursor: move;
-        margin-right: 15px;
-        color: var(--secondary-color);
+    .content-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
     }
     
-    .nav-details {
-        flex: 1;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-    
-    .nav-default, .nav-custom {
+    /* Tab Navigation */
+    .nav-tabs {
         display: flex;
-        flex-direction: column;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-bottom: 1px solid #e2e8f0;
     }
     
-    .nav-label {
-        font-size: 0.75rem;
-        color: var(--secondary-color);
-        margin-bottom: 5px;
+    .nav-item {
+        margin-bottom: -1px;
     }
     
-    .nav-value {
+    .nav-link {
+        display: block;
+        padding: 0.75rem 1rem;
+        border: 1px solid transparent;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        color: #64748b;
+        background-color: transparent;
+        cursor: pointer;
         font-weight: 500;
     }
     
-    .nav-actions {
-        display: flex;
-        gap: 5px;
+    .nav-link:hover {
+        color: #334155;
     }
     
-    .navigation-preview {
-        background-color: #f8fafc;
-        padding: 20px;
-        border-radius: 8px;
+    .nav-link.active {
+        color: #3b82f6;
+        background-color: #fff;
+        border-color: #e2e8f0 #e2e8f0 #fff;
+    }
+    
+    /* Tab Content */
+    .tab-content {
+        display: none;
+        padding: 1.5rem 0;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-header h3 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .section-header p {
+        margin: 0;
+        color: #64748b;
+    }
+    
+    /* Navigation Items */
+    .sortable-list {
+        margin-bottom: 2rem;
+    }
+    
+    .nav-item-config {
+        display: flex;
+        align-items: stretch;
+        margin-bottom: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
+        background-color: #fff;
+        position: relative;
+    }
+    
+    .nav-item-config.floating {
+        position: absolute;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        pointer-events: none;
+    }
+    
+    .nav-item-placeholder {
+        border: 2px dashed #cbd5e1;
+        border-radius: 0.25rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        padding: 0 0.75rem;
+        cursor: move;
+        color: #94a3b8;
+        border-right: 1px solid #e2e8f0;
+    }
+    
+    .nav-item-details {
+        flex: 1;
+        padding: 0.75rem;
+    }
+    
+    .nav-item-info {
+        display: flex;
+        align-items: center;
+    }
+    
+    .nav-item-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 0.25rem;
+        background-color: #f1f5f9;
+        color: #3b82f6;
+        margin-right: 1rem;
+    }
+    
+    .nav-item-labels {
+        flex: 1;
+    }
+    
+    .nav-item-default,
+    .nav-item-custom {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .label-caption {
+        width: 100px;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+    
+    .label-value {
+        font-weight: 500;
+    }
+    
+    .custom-label {
+        width: 200px;
+    }
+    
+    .nav-item-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 0.75rem;
+        border-left: 1px solid #e2e8f0;
+    }
+    
+    .move-up-btn,
+    .move-down-btn {
+        margin: 0.25rem 0;
+    }
+    
+    /* Preview Section */
+    .preview-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .preview-section h4 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.125rem;
+        font-weight: 600;
     }
     
     .sidebar-preview {
         width: 240px;
-        background-color: #fff;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.25rem;
         overflow: hidden;
     }
     
     .sidebar-preview-header {
-        padding: 15px;
-        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+        background-color: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
         font-weight: 600;
-        color: var(--primary-color);
+        color: #334155;
     }
     
     .sidebar-preview-items {
-        padding: 10px 0;
+        padding: 0.5rem 0;
     }
     
     .sidebar-preview-item {
         display: flex;
         align-items: center;
-        padding: 8px 15px;
-        color: var(--secondary-color);
-    }
-    
-    .sidebar-preview-icon {
-        margin-right: 10px;
-        width: 18px;
-        height: 18px;
+        padding: 0.5rem 1rem;
+        color: #64748b;
     }
     
     .sidebar-preview-item:hover {
-        background-color: rgba(59, 130, 246, 0.1);
-        color: var(--primary-color);
+        background-color: #f1f5f9;
+        color: #3b82f6;
+    }
+    
+    .sidebar-preview-icon {
+        margin-right: 0.75rem;
+    }
+    
+    /* Coming Soon */
+    .coming-soon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        background-color: #f8fafc;
+        border-radius: 0.25rem;
+        color: #64748b;
+        text-align: center;
+    }
+    
+    .coming-soon i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #94a3b8;
+    }
+    
+    .coming-soon p {
+        margin: 0;
+        font-size: 1.125rem;
+    }
+    
+    /* Button styles */
+    .btn-icon {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 {% endblock %}

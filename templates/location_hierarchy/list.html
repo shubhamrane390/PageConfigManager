@@ -3,118 +3,125 @@
 {% block title %}Location Hierarchy - Access Control System{% endblock %}
 {% block header_title %}Location Hierarchy{% endblock %}
 
-{% block breadcrumb_items %}
-<div class="breadcrumb-item">
-    <a href="/" class="breadcrumb-link">Home</a>
-</div>
-<div class="breadcrumb-item">Location Hierarchy</div>
-{% endblock %}
-
-{% block page_title %}Location Hierarchy{% endblock %}
-{% block page_description %}Define and manage location hierarchy for your organization{% endblock %}
-
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="d-flex align-items-center">
-        <div class="form-group mb-0 me-2">
-            <select id="hierarchyTypeSelector" class="form-control">
-                <option value="">-- Select Hierarchy Type --</option>
-                <!-- Options will be populated dynamically -->
-            </select>
+<div class="content-wrapper">
+    <div class="header-actions">
+        <div class="actions-left">
+            <h2 class="content-title">Location Hierarchy</h2>
+            <div class="hierarchy-selector">
+                <select id="hierarchyTypeSelect" class="form-control">
+                    <option value="">-- Select Hierarchy Type --</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+                <button id="addHierarchyBtn" class="btn btn-sm btn-outline-primary">
+                    <i data-feather="plus"></i> Add Hierarchy Type
+                </button>
+            </div>
         </div>
-        <button id="addHierarchyTypeBtn" class="btn btn-outline-primary">
-            <i data-feather="plus" class="btn-icon"></i> Add Hierarchy Type
+        <button id="addLocationBtn" class="btn btn-primary" disabled>
+            <i data-feather="plus-circle"></i> Add Location
         </button>
     </div>
-    <button id="addLocationBtn" class="btn btn-primary">
-        <i data-feather="plus" class="btn-icon"></i> Add Location
-    </button>
-</div>
 
-<div class="card">
-    <div class="card-body">
-        <div id="location-tree" class="tree-view">
-            <p>Select a hierarchy type to view locations</p>
+    <div class="card">
+        <div class="card-body">
+            <div id="locationTree" class="location-tree">
+                <div class="empty-state">
+                    <i data-feather="map-pin" class="empty-icon"></i>
+                    <p>Select a hierarchy type to view locations</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Add/Edit Hierarchy Type Modal -->
-<div id="hierarchyTypeModal" class="modal">
+<div id="hierarchyModal" class="modal">
     <div class="modal-content">
-        <span class="modal-close">&times;</span>
-        <h3 id="hierarchyTypeModalTitle">Add Hierarchy Type</h3>
-        
-        <form id="hierarchyTypeForm">
-            <input type="hidden" id="hierarchyTypeId" value="">
-            
-            <div class="form-group">
-                <label for="hierarchyTypeName" class="form-label">Hierarchy Type Name:</label>
-                <input type="text" id="hierarchyTypeName" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="hierarchyTypeLevel" class="form-label">Level:</label>
-                <input type="number" id="hierarchyTypeLevel" class="form-control" min="1" value="1" required>
-            </div>
-            
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary cancel-hierarchy-type-btn">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-        </form>
+        <div class="modal-header">
+            <h3 id="hierarchyModalTitle">Add Hierarchy Type</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="hierarchyForm">
+                <input type="hidden" id="hierarchyId" name="id" value="">
+                
+                <div class="form-group">
+                    <label for="hierarchyName">Hierarchy Type Name</label>
+                    <input type="text" id="hierarchyName" name="name" class="form-control" required>
+                    <small class="form-text text-muted">Example: Country, Region, City, Office</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hierarchyLevel">Level</label>
+                    <input type="number" id="hierarchyLevel" name="level" class="form-control" min="1" value="1" required>
+                    <small class="form-text text-muted">Level in the hierarchy (1 = top level)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hierarchyOrg">Organization</label>
+                    <select id="hierarchyOrg" name="organisation" class="form-control" required>
+                        <option value="">-- Select Organization --</option>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+            <button type="button" id="saveHierarchyBtn" class="btn btn-primary">Save</button>
+        </div>
     </div>
 </div>
 
 <!-- Add/Edit Location Modal -->
 <div id="locationModal" class="modal">
     <div class="modal-content">
-        <span class="modal-close">&times;</span>
-        <h3 id="locationModalTitle">Add Location</h3>
-        
-        <form id="locationForm">
-            <input type="hidden" id="locationId" value="">
-            
-            <div class="form-group">
-                <label for="locationName" class="form-label">Location Name:</label>
-                <input type="text" id="locationName" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="hierarchyType" class="form-label">Hierarchy Type:</label>
-                <select id="hierarchyType" class="form-control" required>
-                    <option value="">-- Select Hierarchy Type --</option>
-                    <!-- Options will be populated dynamically -->
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="parentLocation" class="form-label">Parent Location:</label>
-                <select id="parentLocation" class="form-control">
-                    <option value="">-- None (Top Level) --</option>
-                    <!-- Options will be populated dynamically -->
-                </select>
-            </div>
-            
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary cancel-location-btn">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-        </form>
+        <div class="modal-header">
+            <h3 id="locationModalTitle">Add Location</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="locationForm">
+                <input type="hidden" id="locationId" name="id" value="">
+                <input type="hidden" id="locationHierarchyType" name="hierarchy_type" value="">
+                
+                <div class="form-group">
+                    <label for="locationName">Location Name</label>
+                    <input type="text" id="locationName" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="locationParent">Parent Location</label>
+                    <select id="locationParent" name="parent" class="form-control">
+                        <option value="">-- None (Top Level) --</option>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                    <small class="form-text text-muted">Leave empty to create a top-level location</small>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+            <button type="button" id="saveLocationBtn" class="btn btn-primary">Save</button>
+        </div>
     </div>
 </div>
 
-<!-- Confirmation Modal -->
-<div id="confirmModal" class="modal">
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
     <div class="modal-content">
-        <span class="modal-close">&times;</span>
-        <h3>Confirm Delete</h3>
-        
-        <p>Are you sure you want to delete this item? This action cannot be undone.</p>
-        
-        <div class="form-actions">
-            <button class="btn btn-secondary cancel-confirm-btn">Cancel</button>
-            <button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+        <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+            <p id="deleteWarning" class="text-danger"><strong>Warning:</strong> All child locations will also be deleted.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+            <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
         </div>
     </div>
 </div>
@@ -122,46 +129,38 @@
 
 {% block extra_js %}
 <script>
+    // Store data
     let hierarchyTypes = [];
     let locations = [];
-    let currentItemId = null;
-    let currentItemType = null; // 'hierarchy' or 'location'
-    let selectedHierarchyTypeId = null;
+    let organizations = [];
+    let currentHierarchyId = null;
+    let currentLocationId = null;
+    let deleteItemType = null; // 'hierarchy' or 'location'
     
+    // DOM Ready handler
     onDOMReady(async () => {
-        // Initialize the page
-        await loadHierarchyTypes();
+        // Load initial data
+        await Promise.all([
+            loadHierarchyTypes(),
+            loadOrganizations()
+        ]);
         
         // Set up event listeners
-        document.getElementById('hierarchyTypeSelector').addEventListener('change', handleHierarchyTypeChange);
-        document.getElementById('addHierarchyTypeBtn').addEventListener('click', showAddHierarchyTypeModal);
+        document.getElementById('hierarchyTypeSelect').addEventListener('change', handleHierarchyChange);
+        document.getElementById('addHierarchyBtn').addEventListener('click', showAddHierarchyModal);
         document.getElementById('addLocationBtn').addEventListener('click', showAddLocationModal);
-        
-        // Modal close buttons
-        document.querySelectorAll('.modal-close, .cancel-hierarchy-type-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.getElementById('hierarchyTypeModal').style.display = 'none';
-            });
-        });
-        
-        document.querySelectorAll('.modal-close, .cancel-location-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.getElementById('locationModal').style.display = 'none';
-            });
-        });
-        
-        document.querySelectorAll('.modal-close, .cancel-confirm-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                document.getElementById('confirmModal').style.display = 'none';
-            });
-        });
-        
-        // Form submission
-        document.getElementById('hierarchyTypeForm').addEventListener('submit', handleSaveHierarchyType);
-        document.getElementById('locationForm').addEventListener('submit', handleSaveLocation);
-        
-        // Confirm delete button
+        document.getElementById('saveHierarchyBtn').addEventListener('click', handleSaveHierarchy);
+        document.getElementById('saveLocationBtn').addEventListener('click', handleSaveLocation);
         document.getElementById('confirmDeleteBtn').addEventListener('click', handleDelete);
+        
+        // Modal close handlers
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            });
+        });
         
         // Initialize feather icons
         if (typeof feather !== 'undefined') {
@@ -169,466 +168,524 @@
         }
     });
     
+    // Load hierarchy types from API
     async function loadHierarchyTypes() {
         try {
-            const response = await fetch('/location_hierarchy/types/');
+            const response = await fetch('/api/location-hierarchies/');
+            
+            // If API is unavailable, use sample data
             if (!response.ok) {
-                throw new Error('Failed to load hierarchy types');
+                throw new Error('API not available');
             }
             
             hierarchyTypes = await response.json();
-            populateHierarchyTypeSelector(hierarchyTypes);
+            populateHierarchyTypeSelect();
         } catch (error) {
-            console.error('Error loading hierarchy types:', error);
+            console.log('Using sample data due to API error:', error);
             
-            // Sample data for demo
+            // Sample data for testing
             hierarchyTypes = [
-                { id: 1, name: 'Regional', level: 1 },
-                { id: 2, name: 'Country', level: 2 },
-                { id: 3, name: 'City', level: 3 },
-                { id: 4, name: 'Office', level: 4 }
+                { id: 1, name: 'Global', level: 1, organisation: 1 },
+                { id: 2, name: 'Country', level: 2, organisation: 1 },
+                { id: 3, name: 'City', level: 3, organisation: 1 },
+                { id: 4, name: 'Office', level: 4, organisation: 1 }
             ];
             
-            populateHierarchyTypeSelector(hierarchyTypes);
+            populateHierarchyTypeSelect();
         }
     }
     
-    function populateHierarchyTypeSelector(types) {
-        const selector = document.getElementById('hierarchyTypeSelector');
-        const hierarchyTypeSelect = document.getElementById('hierarchyType');
-        
-        // Keep the first option (placeholder)
-        const firstOption = selector.options[0];
-        selector.innerHTML = '';
-        selector.appendChild(firstOption);
-        
-        // Add hierarchy types as options
-        types.forEach(type => {
-            const option = document.createElement('option');
-            option.value = type.id;
-            option.textContent = `${type.name} (Level ${type.level})`;
-            selector.appendChild(option);
+    // Load organizations from API
+    async function loadOrganizations() {
+        try {
+            const response = await fetch('/api/organizations/');
             
-            // Also add to the location modal dropdown
-            const typeOption = document.createElement('option');
-            typeOption.value = type.id;
-            typeOption.textContent = `${type.name} (Level ${type.level})`;
-            hierarchyTypeSelect.appendChild(typeOption);
-        });
-    }
-    
-    async function handleHierarchyTypeChange(event) {
-        const hierarchyTypeId = event.target.value;
-        selectedHierarchyTypeId = hierarchyTypeId;
-        
-        if (!hierarchyTypeId) {
-            document.getElementById('location-tree').innerHTML = '<p>Select a hierarchy type to view locations</p>';
-            return;
+            // If API is unavailable, use sample data
+            if (!response.ok) {
+                throw new Error('API not available');
+            }
+            
+            organizations = await response.json();
+            populateOrganizationSelect();
+        } catch (error) {
+            console.log('Using sample data due to API error:', error);
+            
+            // Sample data for testing
+            organizations = [
+                { id: 1, name: 'Headquarters' },
+                { id: 2, name: 'Engineering' },
+                { id: 3, name: 'Sales' }
+            ];
+            
+            populateOrganizationSelect();
         }
-        
-        await loadLocations(hierarchyTypeId);
     }
     
+    // Load locations for a specific hierarchy type
     async function loadLocations(hierarchyTypeId) {
         try {
-            const response = await fetch(`/location_hierarchy/locations/?hierarchy_type=${hierarchyTypeId}`);
+            const response = await fetch(`/api/locations/?hierarchy_type=${hierarchyTypeId}`);
+            
+            // If API is unavailable, use sample data
             if (!response.ok) {
-                throw new Error('Failed to load locations');
+                throw new Error('API not available');
             }
             
             locations = await response.json();
-            
-            // Build location tree
-            const locationMap = {};
-            locations.forEach(location => {
-                location.children = [];
-                locationMap[location.id] = location;
-            });
-            
-            const rootLocations = [];
-            locations.forEach(location => {
-                if (location.parent_id && locationMap[location.parent_id]) {
-                    locationMap[location.parent_id].children.push(location);
-                } else {
-                    rootLocations.push(location);
-                }
-            });
-            
-            renderLocationTree(rootLocations);
-            populateParentLocationDropdown(locationMap, null);
+            buildLocationTree();
         } catch (error) {
-            console.error('Error loading locations:', error);
+            console.log('Using sample data due to API error:', error);
             
-            // Sample data for demo
-            const sampleLocations = [
-                { 
-                    id: 1, 
-                    name: 'North America', 
-                    hierarchy_type_id: 1, 
-                    parent_id: null,
-                    children: [
-                        { 
-                            id: 2, 
-                            name: 'United States', 
-                            hierarchy_type_id: 2, 
-                            parent_id: 1,
-                            children: [
-                                { 
-                                    id: 3, 
-                                    name: 'New York', 
-                                    hierarchy_type_id: 3, 
-                                    parent_id: 2,
-                                    children: [
-                                        { 
-                                            id: 4, 
-                                            name: 'Manhattan Office', 
-                                            hierarchy_type_id: 4, 
-                                            parent_id: 3,
-                                            children: []
-                                        }
-                                    ]
-                                },
-                                { 
-                                    id: 5, 
-                                    name: 'San Francisco', 
-                                    hierarchy_type_id: 3, 
-                                    parent_id: 2,
-                                    children: []
-                                }
-                            ]
-                        },
-                        { 
-                            id: 6, 
-                            name: 'Canada', 
-                            hierarchy_type_id: 2, 
-                            parent_id: 1,
-                            children: []
-                        }
-                    ]
-                },
-                { 
-                    id: 7, 
-                    name: 'Europe', 
-                    hierarchy_type_id: 1, 
-                    parent_id: null,
-                    children: []
-                }
-            ];
+            // Sample data for testing
+            if (hierarchyTypeId === '1') { // Global
+                locations = [
+                    { id: 1, name: 'North America', hierarchy_type: 1, parent: null },
+                    { id: 2, name: 'Europe', hierarchy_type: 1, parent: null },
+                    { id: 3, name: 'Asia Pacific', hierarchy_type: 1, parent: null }
+                ];
+            } else if (hierarchyTypeId === '2') { // Country
+                locations = [
+                    { id: 4, name: 'United States', hierarchy_type: 2, parent: 1 },
+                    { id: 5, name: 'Canada', hierarchy_type: 2, parent: 1 },
+                    { id: 6, name: 'United Kingdom', hierarchy_type: 2, parent: 2 },
+                    { id: 7, name: 'Germany', hierarchy_type: 2, parent: 2 },
+                    { id: 8, name: 'Japan', hierarchy_type: 2, parent: 3 },
+                    { id: 9, name: 'Australia', hierarchy_type: 2, parent: 3 }
+                ];
+            } else if (hierarchyTypeId === '3') { // City
+                locations = [
+                    { id: 10, name: 'New York', hierarchy_type: 3, parent: 4 },
+                    { id: 11, name: 'San Francisco', hierarchy_type: 3, parent: 4 },
+                    { id: 12, name: 'Toronto', hierarchy_type: 3, parent: 5 },
+                    { id: 13, name: 'London', hierarchy_type: 3, parent: 6 },
+                    { id: 14, name: 'Berlin', hierarchy_type: 3, parent: 7 },
+                    { id: 15, name: 'Tokyo', hierarchy_type: 3, parent: 8 },
+                    { id: 16, name: 'Sydney', hierarchy_type: 3, parent: 9 }
+                ];
+            } else if (hierarchyTypeId === '4') { // Office
+                locations = [
+                    { id: 17, name: 'NYC Headquarters', hierarchy_type: 4, parent: 10 },
+                    { id: 18, name: 'SFO Main Office', hierarchy_type: 4, parent: 11 },
+                    { id: 19, name: 'Toronto Downtown', hierarchy_type: 4, parent: 12 },
+                    { id: 20, name: 'London City', hierarchy_type: 4, parent: 13 },
+                    { id: 21, name: 'Berlin Central', hierarchy_type: 4, parent: 14 },
+                    { id: 22, name: 'Tokyo Shibuya', hierarchy_type: 4, parent: 15 },
+                    { id: 23, name: 'Sydney CBD', hierarchy_type: 4, parent: 16 }
+                ];
+            } else {
+                locations = [];
+            }
             
-            // Flatten sample data for dropdown
-            locations = [];
-            const flattenLocations = (items, result = []) => {
-                items.forEach(item => {
-                    const { children, ...location } = item;
-                    result.push(location);
-                    if (children && children.length > 0) {
-                        flattenLocations(children, result);
-                    }
-                });
-                return result;
-            };
-            
-            locations = flattenLocations(sampleLocations);
-            
-            renderLocationTree(sampleLocations);
-            
-            // Build location map for dropdown
-            const locationMap = {};
-            locations.forEach(location => {
-                locationMap[location.id] = location;
-            });
-            
-            populateParentLocationDropdown(locationMap, null);
+            buildLocationTree();
         }
     }
     
-    function renderLocationTree(locations) {
-        const container = document.getElementById('location-tree');
+    // Populate the hierarchy type dropdown
+    function populateHierarchyTypeSelect() {
+        const select = document.getElementById('hierarchyTypeSelect');
+        const firstOption = select.options[0];
+        select.innerHTML = '';
+        select.appendChild(firstOption);
+        
+        hierarchyTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type.id;
+            option.textContent = `${type.name} (Level ${type.level})`;
+            select.appendChild(option);
+        });
+    }
+    
+    // Populate the organization dropdown
+    function populateOrganizationSelect() {
+        const select = document.getElementById('hierarchyOrg');
+        const firstOption = select.options[0];
+        select.innerHTML = '';
+        select.appendChild(firstOption);
+        
+        organizations.forEach(org => {
+            const option = document.createElement('option');
+            option.value = org.id;
+            option.textContent = org.name;
+            select.appendChild(option);
+        });
+    }
+    
+    // Build location tree structure
+    function buildLocationTree() {
+        // Create tree structure
+        const locationMap = {};
+        locations.forEach(location => {
+            location.children = [];
+            locationMap[location.id] = location;
+        });
+        
+        const rootLocations = [];
+        locations.forEach(location => {
+            if (location.parent && locationMap[location.parent]) {
+                locationMap[location.parent].children.push(location);
+            } else {
+                rootLocations.push(location);
+            }
+        });
+        
+        renderLocationTree(rootLocations);
+        populateParentLocationSelect();
+    }
+    
+    // Render the location tree
+    function renderLocationTree(rootLocations) {
+        const container = document.getElementById('locationTree');
         container.innerHTML = '';
         
-        if (!locations || locations.length === 0) {
-            container.innerHTML = '<p>No locations found for this hierarchy type.</p>';
+        if (!rootLocations || rootLocations.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i data-feather="map-pin" class="empty-icon"></i>
+                    <p>No locations found for this hierarchy type</p>
+                    <button id="emptyAddLocationBtn" class="btn btn-primary">
+                        <i data-feather="plus"></i> Add First Location
+                    </button>
+                </div>
+            `;
+            
+            // Initialize feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            // Add event listener for empty state button
+            document.getElementById('emptyAddLocationBtn').addEventListener('click', showAddLocationModal);
+            
             return;
         }
         
-        function createLocationItem(location) {
-            const hasChildren = location.children && location.children.length > 0;
-            
-            const treeItem = document.createElement('div');
-            treeItem.className = 'tree-item';
-            treeItem.dataset.id = location.id;
-            
-            const itemContent = document.createElement('div');
-            itemContent.className = 'tree-item-content';
-            
-            // Toggle button for expandable items
-            const toggleBtn = document.createElement('span');
-            toggleBtn.className = 'tree-toggle';
-            toggleBtn.innerHTML = hasChildren ? '<i data-feather="chevron-down"></i>' : '<span style="width: 20px;"></span>';
-            itemContent.appendChild(toggleBtn);
-            
-            // Item label with icon
-            const label = document.createElement('div');
-            label.className = 'tree-label';
-            label.innerHTML = `
-                <i data-feather="map-pin" class="tree-icon"></i>
-                <span>${location.name}</span>
-            `;
-            itemContent.appendChild(label);
-            
-            // Action buttons
-            const actions = document.createElement('div');
-            actions.className = 'd-flex';
-            actions.innerHTML = `
-                <button class="btn btn-sm" title="Add Child" data-action="add" data-id="${location.id}">
-                    <i data-feather="plus"></i>
-                </button>
-                <button class="btn btn-sm" title="Edit" data-action="edit" data-id="${location.id}">
-                    <i data-feather="edit-2"></i>
-                </button>
-                <button class="btn btn-sm" title="Delete" data-action="delete" data-id="${location.id}">
-                    <i data-feather="trash-2"></i>
-                </button>
-            `;
-            itemContent.appendChild(actions);
-            
-            treeItem.appendChild(itemContent);
-            
-            // Add children if they exist
-            if (hasChildren) {
-                const childrenContainer = document.createElement('div');
-                childrenContainer.className = 'tree-children';
-                
-                location.children.forEach(child => {
-                    childrenContainer.appendChild(createLocationItem(child));
-                });
-                
-                treeItem.appendChild(childrenContainer);
-                
-                // Add toggle functionality
-                toggleBtn.addEventListener('click', () => {
-                    childrenContainer.style.display = 
-                        childrenContainer.style.display === 'none' ? 'block' : 'none';
-                    toggleBtn.innerHTML = 
-                        childrenContainer.style.display === 'none' ? 
-                        '<i data-feather="chevron-right"></i>' : 
-                        '<i data-feather="chevron-down"></i>';
-                    
-                    // Re-initialize feather icons
-                    if (typeof feather !== 'undefined') {
-                        feather.replace();
-                    }
-                });
-            }
-            
-            return treeItem;
-        }
+        // Create tree view
+        const treeView = document.createElement('div');
+        treeView.className = 'tree-view';
         
-        locations.forEach(location => {
-            container.appendChild(createLocationItem(location));
+        // Render each root location
+        rootLocations.forEach(location => {
+            const locationNode = createLocationNode(location);
+            treeView.appendChild(locationNode);
         });
+        
+        container.appendChild(treeView);
         
         // Initialize feather icons
         if (typeof feather !== 'undefined') {
             feather.replace();
         }
+    }
+    
+    // Create a single location node
+    function createLocationNode(location, level = 0) {
+        const hasChildren = location.children && location.children.length > 0;
         
-        // Add event listeners for action buttons
-        container.querySelectorAll('[data-action]').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const action = e.currentTarget.dataset.action;
-                const locationId = parseInt(e.currentTarget.dataset.id);
-                
-                if (action === 'add') {
-                    showAddChildLocationModal(locationId);
-                } else if (action === 'edit') {
-                    showEditLocationModal(locationId);
-                } else if (action === 'delete') {
-                    showDeleteConfirmation('location', locationId);
-                }
+        // Create node container
+        const nodeContainer = document.createElement('div');
+        nodeContainer.className = 'tree-node';
+        nodeContainer.dataset.id = location.id;
+        
+        // Create node content
+        const nodeContent = document.createElement('div');
+        nodeContent.className = 'tree-node-content';
+        nodeContent.style.paddingLeft = `${level * 20}px`;
+        
+        // Toggle icon
+        const toggleIcon = document.createElement('span');
+        toggleIcon.className = 'tree-toggle';
+        toggleIcon.innerHTML = hasChildren 
+            ? '<i data-feather="chevron-down"></i>' 
+            : '<span class="toggle-placeholder"></span>';
+        nodeContent.appendChild(toggleIcon);
+        
+        // Location info
+        const locationInfo = document.createElement('div');
+        locationInfo.className = 'tree-node-info';
+        locationInfo.innerHTML = `
+            <i data-feather="map-pin" class="location-icon"></i>
+            <span class="location-name">${location.name}</span>
+        `;
+        nodeContent.appendChild(locationInfo);
+        
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'tree-node-actions';
+        actions.innerHTML = `
+            <button class="btn btn-sm btn-icon add-child-btn" title="Add Child" data-id="${location.id}">
+                <i data-feather="plus"></i>
+            </button>
+            <button class="btn btn-sm btn-icon edit-location-btn" title="Edit" data-id="${location.id}">
+                <i data-feather="edit-2"></i>
+            </button>
+            <button class="btn btn-sm btn-icon delete-location-btn" title="Delete" data-id="${location.id}">
+                <i data-feather="trash-2"></i>
+            </button>
+        `;
+        nodeContent.appendChild(actions);
+        
+        nodeContainer.appendChild(nodeContent);
+        
+        // Add children if any
+        if (hasChildren) {
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'tree-children';
+            
+            location.children.forEach(child => {
+                const childNode = createLocationNode(child, level + 1);
+                childrenContainer.appendChild(childNode);
             });
+            
+            nodeContainer.appendChild(childrenContainer);
+            
+            // Add toggle functionality
+            toggleIcon.addEventListener('click', () => {
+                childrenContainer.classList.toggle('collapsed');
+                toggleIcon.innerHTML = childrenContainer.classList.contains('collapsed')
+                    ? '<i data-feather="chevron-right"></i>'
+                    : '<i data-feather="chevron-down"></i>';
+                feather.replace();
+            });
+        }
+        
+        // Add event listeners for actions
+        nodeContainer.querySelector('.add-child-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            showAddChildLocationModal(location.id);
+        });
+        
+        nodeContainer.querySelector('.edit-location-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            showEditLocationModal(location.id);
+        });
+        
+        nodeContainer.querySelector('.delete-location-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            showDeleteLocationConfirmation(location.id);
+        });
+        
+        return nodeContainer;
+    }
+    
+    // Populate the parent location dropdown
+    function populateParentLocationSelect() {
+        const select = document.getElementById('locationParent');
+        const firstOption = select.options[0];
+        select.innerHTML = '';
+        select.appendChild(firstOption);
+        
+        locations.forEach(location => {
+            if (location.id !== currentLocationId) {
+                const option = document.createElement('option');
+                option.value = location.id;
+                option.textContent = location.name;
+                select.appendChild(option);
+            }
         });
     }
     
-    function populateParentLocationDropdown(locationMap, excludeId) {
-        const dropdown = document.getElementById('parentLocation');
+    // Handle hierarchy type change
+    function handleHierarchyChange(event) {
+        const hierarchyTypeId = event.target.value;
         
-        // Keep the first option (placeholder)
-        const firstOption = dropdown.options[0];
-        dropdown.innerHTML = '';
-        dropdown.appendChild(firstOption);
+        // Enable/disable the add location button
+        document.getElementById('addLocationBtn').disabled = !hierarchyTypeId;
         
-        // Add locations as options
-        for (const locationId in locationMap) {
-            if (excludeId && parseInt(locationId) === excludeId) continue;
+        if (hierarchyTypeId) {
+            currentHierarchyId = hierarchyTypeId;
+            loadLocations(hierarchyTypeId);
+        } else {
+            currentHierarchyId = null;
+            locations = [];
             
-            const location = locationMap[locationId];
-            const option = document.createElement('option');
-            option.value = location.id;
-            option.textContent = location.name;
-            dropdown.appendChild(option);
+            const container = document.getElementById('locationTree');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i data-feather="map-pin" class="empty-icon"></i>
+                    <p>Select a hierarchy type to view locations</p>
+                </div>
+            `;
+            
+            // Initialize feather icons
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
         }
     }
     
-    function showAddHierarchyTypeModal() {
-        document.getElementById('hierarchyTypeModalTitle').textContent = 'Add Hierarchy Type';
-        document.getElementById('hierarchyTypeId').value = '';
-        document.getElementById('hierarchyTypeName').value = '';
-        document.getElementById('hierarchyTypeLevel').value = '1';
-        
-        document.getElementById('hierarchyTypeModal').style.display = 'block';
+    // Show add hierarchy type modal
+    function showAddHierarchyModal() {
+        currentHierarchyId = null;
+        document.getElementById('hierarchyModalTitle').textContent = 'Add Hierarchy Type';
+        document.getElementById('hierarchyForm').reset();
+        document.getElementById('hierarchyId').value = '';
+        document.getElementById('hierarchyModal').style.display = 'block';
     }
     
-    function showEditHierarchyTypeModal(typeId) {
-        const hierarchyType = hierarchyTypes.find(t => t.id === typeId);
-        if (!hierarchyType) return;
+    // Show edit hierarchy type modal
+    function showEditHierarchyModal(hierarchyId) {
+        const hierarchy = hierarchyTypes.find(h => h.id == hierarchyId);
+        if (!hierarchy) return;
         
-        document.getElementById('hierarchyTypeModalTitle').textContent = 'Edit Hierarchy Type';
-        document.getElementById('hierarchyTypeId').value = hierarchyType.id;
-        document.getElementById('hierarchyTypeName').value = hierarchyType.name;
-        document.getElementById('hierarchyTypeLevel').value = hierarchyType.level;
+        currentHierarchyId = hierarchyId;
+        document.getElementById('hierarchyModalTitle').textContent = 'Edit Hierarchy Type';
+        document.getElementById('hierarchyId').value = hierarchy.id;
+        document.getElementById('hierarchyName').value = hierarchy.name;
+        document.getElementById('hierarchyLevel').value = hierarchy.level;
+        document.getElementById('hierarchyOrg').value = hierarchy.organisation;
         
-        document.getElementById('hierarchyTypeModal').style.display = 'block';
+        document.getElementById('hierarchyModal').style.display = 'block';
     }
     
+    // Show add location modal
     function showAddLocationModal() {
+        currentLocationId = null;
         document.getElementById('locationModalTitle').textContent = 'Add Location';
+        document.getElementById('locationForm').reset();
         document.getElementById('locationId').value = '';
-        document.getElementById('locationName').value = '';
-        document.getElementById('hierarchyType').value = selectedHierarchyTypeId || '';
-        document.getElementById('parentLocation').value = '';
+        document.getElementById('locationHierarchyType').value = currentHierarchyId;
+        document.getElementById('locationParent').value = '';
         
         document.getElementById('locationModal').style.display = 'block';
     }
     
+    // Show add child location modal
     function showAddChildLocationModal(parentId) {
-        const parentLocation = locations.find(l => l.id === parentId);
-        if (!parentLocation) return;
-        
+        currentLocationId = null;
         document.getElementById('locationModalTitle').textContent = 'Add Child Location';
+        document.getElementById('locationForm').reset();
         document.getElementById('locationId').value = '';
-        document.getElementById('locationName').value = '';
-        document.getElementById('hierarchyType').value = parentLocation.hierarchy_type_id;
-        document.getElementById('parentLocation').value = parentId;
+        document.getElementById('locationHierarchyType').value = currentHierarchyId;
+        document.getElementById('locationParent').value = parentId;
         
         document.getElementById('locationModal').style.display = 'block';
     }
     
+    // Show edit location modal
     function showEditLocationModal(locationId) {
-        const location = locations.find(l => l.id === locationId);
+        const location = locations.find(l => l.id == locationId);
         if (!location) return;
         
+        currentLocationId = locationId;
         document.getElementById('locationModalTitle').textContent = 'Edit Location';
         document.getElementById('locationId').value = location.id;
         document.getElementById('locationName').value = location.name;
-        document.getElementById('hierarchyType').value = location.hierarchy_type_id;
-        document.getElementById('parentLocation').value = location.parent_id || '';
+        document.getElementById('locationHierarchyType').value = location.hierarchy_type;
+        document.getElementById('locationParent').value = location.parent || '';
         
-        // Rebuild parent dropdown excluding this location
-        const locationMap = {};
-        locations.forEach(loc => {
-            if (loc.id !== locationId) {
-                locationMap[loc.id] = loc;
-            }
-        });
-        
-        populateParentLocationDropdown(locationMap, locationId);
-        
+        populateParentLocationSelect();
         document.getElementById('locationModal').style.display = 'block';
     }
     
-    function showDeleteConfirmation(itemType, itemId) {
-        currentItemType = itemType;
-        currentItemId = itemId;
-        document.getElementById('confirmModal').style.display = 'block';
+    // Show delete hierarchy confirmation
+    function showDeleteHierarchyConfirmation(hierarchyId) {
+        deleteItemType = 'hierarchy';
+        currentHierarchyId = hierarchyId;
+        document.getElementById('deleteWarning').textContent = 'Warning: All locations of this hierarchy type will be deleted.';
+        document.getElementById('deleteModal').style.display = 'block';
     }
     
-    async function handleSaveHierarchyType(event) {
-        event.preventDefault();
+    // Show delete location confirmation
+    function showDeleteLocationConfirmation(locationId) {
+        deleteItemType = 'location';
+        currentLocationId = locationId;
         
-        const typeId = document.getElementById('hierarchyTypeId').value;
-        const name = document.getElementById('hierarchyTypeName').value;
-        const level = document.getElementById('hierarchyTypeLevel').value;
+        // Check if location has children
+        const location = locations.find(l => l.id == locationId);
+        const hasChildren = location && location.children && location.children.length > 0;
         
-        const hierarchyTypeData = {
-            name: name,
-            level: parseInt(level)
-        };
+        document.getElementById('deleteWarning').textContent = hasChildren
+            ? 'Warning: All child locations will also be deleted.'
+            : '';
         
-        if (typeId) {
-            hierarchyTypeData.id = parseInt(typeId);
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+    
+    // Handle save hierarchy type
+    async function handleSaveHierarchy() {
+        const form = document.getElementById('hierarchyForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
         }
         
+        const formData = new FormData(form);
+        const hierarchyData = {
+            id: formData.get('id') ? parseInt(formData.get('id')) : null,
+            name: formData.get('name'),
+            level: parseInt(formData.get('level')),
+            organisation: parseInt(formData.get('organisation'))
+        };
+        
         try {
-            // In a real implementation, you would save to the server
-            // const response = await fetch(typeId ? `/location_hierarchy/types/${typeId}/update/` : '/location_hierarchy/types/create/', {
-            //     method: 'POST',
+            // In a real application, this would be an API call
+            // const response = await fetch('/api/location-hierarchies/', {
+            //     method: hierarchyData.id ? 'PUT' : 'POST',
             //     headers: {
             //         'Content-Type': 'application/json',
             //         'X-CSRFToken': Helpers.getCsrfToken()
             //     },
-            //     body: JSON.stringify(hierarchyTypeData)
+            //     body: JSON.stringify(hierarchyData)
             // });
             
-            // For demo purposes, simulate success
-            if (typeId) {
-                // Update existing type
-                const index = hierarchyTypes.findIndex(t => t.id === parseInt(typeId));
-                if (index !== -1) {
-                    hierarchyTypes[index] = {
-                        ...hierarchyTypes[index],
-                        name: name,
-                        level: parseInt(level)
-                    };
+            // if (!response.ok) throw new Error('Failed to save hierarchy type');
+            // const savedHierarchy = await response.json();
+            
+            // For demo, update local data
+            if (hierarchyData.id) {
+                // Update existing hierarchy
+                const index = hierarchyTypes.findIndex(h => h.id == hierarchyData.id);
+                if (index >= 0) {
+                    hierarchyTypes[index] = {...hierarchyTypes[index], ...hierarchyData};
                 }
             } else {
-                // Add new type
-                const newId = hierarchyTypes.length > 0 ? Math.max(...hierarchyTypes.map(t => t.id)) + 1 : 1;
+                // Add new hierarchy
+                const newId = Math.max(0, ...hierarchyTypes.map(h => h.id)) + 1;
                 hierarchyTypes.push({
-                    id: newId,
-                    name: name,
-                    level: parseInt(level)
+                    ...hierarchyData,
+                    id: newId
                 });
             }
             
-            // Close modal and refresh
-            document.getElementById('hierarchyTypeModal').style.display = 'none';
-            populateHierarchyTypeSelector(hierarchyTypes);
+            // Update UI
+            populateHierarchyTypeSelect();
+            
+            // Close modal
+            document.getElementById('hierarchyModal').style.display = 'none';
             
             // Show success message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert(`Hierarchy type ${typeId ? 'updated' : 'created'} successfully`, 'success', container);
+            Helpers.showAlert(`Hierarchy type ${hierarchyData.id ? 'updated' : 'created'} successfully`, 'success', container);
+            
         } catch (error) {
             console.error('Error saving hierarchy type:', error);
             
             // Show error message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert('Error saving hierarchy type. Please try again.', 'danger', container);
+            Helpers.showAlert('Failed to save hierarchy type. Please try again.', 'danger', container);
         }
     }
     
-    async function handleSaveLocation(event) {
-        event.preventDefault();
-        
-        const locationId = document.getElementById('locationId').value;
-        const name = document.getElementById('locationName').value;
-        const hierarchyTypeId = document.getElementById('hierarchyType').value;
-        const parentId = document.getElementById('parentLocation').value;
-        
-        const locationData = {
-            name: name,
-            hierarchy_type_id: parseInt(hierarchyTypeId),
-            parent_id: parentId ? parseInt(parentId) : null
-        };
-        
-        if (locationId) {
-            locationData.id = parseInt(locationId);
+    // Handle save location
+    async function handleSaveLocation() {
+        const form = document.getElementById('locationForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
         }
         
+        const formData = new FormData(form);
+        const locationData = {
+            id: formData.get('id') ? parseInt(formData.get('id')) : null,
+            name: formData.get('name'),
+            hierarchy_type: parseInt(formData.get('hierarchy_type')),
+            parent: formData.get('parent') ? parseInt(formData.get('parent')) : null
+        };
+        
         try {
-            // In a real implementation, you would save to the server
-            // const response = await fetch(locationId ? `/location_hierarchy/locations/${locationId}/update/` : '/location_hierarchy/locations/create/', {
-            //     method: 'POST',
+            // In a real application, this would be an API call
+            // const response = await fetch('/api/locations/', {
+            //     method: locationData.id ? 'PUT' : 'POST',
             //     headers: {
             //         'Content-Type': 'application/json',
             //         'X-CSRFToken': Helpers.getCsrfToken()
@@ -636,114 +693,290 @@
             //     body: JSON.stringify(locationData)
             // });
             
-            // For demo purposes, simulate success
-            document.getElementById('locationModal').style.display = 'none';
+            // if (!response.ok) throw new Error('Failed to save location');
+            // const savedLocation = await response.json();
             
-            // Refresh locations
-            if (selectedHierarchyTypeId) {
-                await loadLocations(selectedHierarchyTypeId);
+            // For demo, update local data
+            if (locationData.id) {
+                // Update existing location
+                const index = locations.findIndex(l => l.id == locationData.id);
+                if (index >= 0) {
+                    locations[index] = {...locations[index], ...locationData};
+                }
+            } else {
+                // Add new location
+                const newId = Math.max(0, ...locations.map(l => l.id)) + 1;
+                locations.push({
+                    ...locationData,
+                    id: newId
+                });
             }
+            
+            // Rebuild tree and re-render
+            buildLocationTree();
+            
+            // Close modal
+            document.getElementById('locationModal').style.display = 'none';
             
             // Show success message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert(`Location ${locationId ? 'updated' : 'created'} successfully`, 'success', container);
+            Helpers.showAlert(`Location ${locationData.id ? 'updated' : 'created'} successfully`, 'success', container);
+            
         } catch (error) {
             console.error('Error saving location:', error);
             
             // Show error message
             const container = document.querySelector('.card-body');
-            Helpers.showAlert('Error saving location. Please try again.', 'danger', container);
+            Helpers.showAlert('Failed to save location. Please try again.', 'danger', container);
         }
     }
     
+    // Handle delete
     async function handleDelete() {
-        if (!currentItemId || !currentItemType) return;
-        
-        try {
-            // In a real implementation, you would delete from the server
-            // const response = await fetch(`/location_hierarchy/${currentItemType}s/${currentItemId}/delete/`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'X-CSRFToken': Helpers.getCsrfToken()
-            //     }
-            // });
-            
-            // For demo purposes, simulate success
-            document.getElementById('confirmModal').style.display = 'none';
-            
-            if (currentItemType === 'hierarchy') {
-                // Remove hierarchy type
-                const index = hierarchyTypes.findIndex(t => t.id === currentItemId);
-                if (index !== -1) {
+        if (deleteItemType === 'hierarchy' && currentHierarchyId) {
+            try {
+                // In a real application, this would be an API call
+                // const response = await fetch(`/api/location-hierarchies/${currentHierarchyId}`, {
+                //     method: 'DELETE',
+                //     headers: {
+                //         'X-CSRFToken': Helpers.getCsrfToken()
+                //     }
+                // });
+                
+                // if (!response.ok) throw new Error('Failed to delete hierarchy type');
+                
+                // For demo, update local data
+                const index = hierarchyTypes.findIndex(h => h.id == currentHierarchyId);
+                if (index >= 0) {
                     hierarchyTypes.splice(index, 1);
-                    populateHierarchyTypeSelector(hierarchyTypes);
                 }
-            } else if (currentItemType === 'location') {
-                // Refresh locations
-                if (selectedHierarchyTypeId) {
-                    await loadLocations(selectedHierarchyTypeId);
+                
+                // Update UI
+                populateHierarchyTypeSelect();
+                
+                // Reset current hierarchy if it was deleted
+                if (document.getElementById('hierarchyTypeSelect').value == currentHierarchyId) {
+                    document.getElementById('hierarchyTypeSelect').value = '';
+                    document.getElementById('addLocationBtn').disabled = true;
+                    
+                    const container = document.getElementById('locationTree');
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i data-feather="map-pin" class="empty-icon"></i>
+                            <p>Select a hierarchy type to view locations</p>
+                        </div>
+                    `;
+                    
+                    // Initialize feather icons
+                    if (typeof feather !== 'undefined') {
+                        feather.replace();
+                    }
                 }
+                
+                // Close modal
+                document.getElementById('deleteModal').style.display = 'none';
+                
+                // Show success message
+                const container = document.querySelector('.card-body');
+                Helpers.showAlert('Hierarchy type deleted successfully', 'success', container);
+                
+            } catch (error) {
+                console.error('Error deleting hierarchy type:', error);
+                
+                // Show error message
+                const container = document.querySelector('.card-body');
+                Helpers.showAlert('Failed to delete hierarchy type. Please try again.', 'danger', container);
             }
-            
-            // Show success message
-            const container = document.querySelector('.card-body');
-            Helpers.showAlert(`${currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1)} deleted successfully`, 'success', container);
-        } catch (error) {
-            console.error(`Error deleting ${currentItemType}:`, error);
-            
-            // Show error message
-            const container = document.querySelector('.card-body');
-            Helpers.showAlert(`Error deleting ${currentItemType}. Please try again.`, 'danger', container);
+        } else if (deleteItemType === 'location' && currentLocationId) {
+            try {
+                // In a real application, this would be an API call
+                // const response = await fetch(`/api/locations/${currentLocationId}`, {
+                //     method: 'DELETE',
+                //     headers: {
+                //         'X-CSRFToken': Helpers.getCsrfToken()
+                //     }
+                // });
+                
+                // if (!response.ok) throw new Error('Failed to delete location');
+                
+                // For demo, update local data
+                // Remove location and its children recursively
+                function removeLocationAndChildren(locationId) {
+                    const location = locations.find(l => l.id == locationId);
+                    if (!location) return;
+                    
+                    // Recursively remove children
+                    if (location.children && location.children.length > 0) {
+                        location.children.forEach(child => removeLocationAndChildren(child.id));
+                    }
+                    
+                    // Remove the location itself
+                    const index = locations.findIndex(l => l.id == locationId);
+                    if (index >= 0) {
+                        locations.splice(index, 1);
+                    }
+                }
+                
+                removeLocationAndChildren(currentLocationId);
+                
+                // Rebuild tree and re-render
+                buildLocationTree();
+                
+                // Close modal
+                document.getElementById('deleteModal').style.display = 'none';
+                
+                // Show success message
+                const container = document.querySelector('.card-body');
+                Helpers.showAlert('Location deleted successfully', 'success', container);
+                
+            } catch (error) {
+                console.error('Error deleting location:', error);
+                
+                // Show error message
+                const container = document.querySelector('.card-body');
+                Helpers.showAlert('Failed to delete location. Please try again.', 'danger', container);
+            }
         }
     }
 </script>
 
 <style>
-    .tree-item {
-        margin-bottom: 5px;
+    .content-wrapper {
+        width: 100%;
     }
     
-    .tree-item-content {
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .actions-left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .content-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .hierarchy-selector {
         display: flex;
         align-items: center;
-        padding: 8px 5px;
-        border-radius: 4px;
+        gap: 0.5rem;
     }
     
-    .tree-item-content:hover {
+    .location-tree {
+        min-height: 200px;
+    }
+    
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        text-align: center;
+        color: #64748b;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #94a3b8;
+    }
+    
+    /* Tree structure */
+    .tree-view {
+        margin-top: 1rem;
+    }
+    
+    .tree-node {
+        margin-bottom: 0.5rem;
+    }
+    
+    .tree-node-content {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        border-radius: 4px;
         background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .tree-node-content:hover {
+        background-color: #f1f5f9;
     }
     
     .tree-toggle {
-        width: 20px;
-        height: 20px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        margin-right: 5px;
-    }
-    
-    .tree-label {
-        flex: 1;
         display: flex;
         align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        color: #64748b;
     }
     
-    .tree-icon {
-        margin-right: 5px;
-        color: var(--secondary-color);
+    .toggle-placeholder {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .tree-node-info {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        margin-left: 0.5rem;
+    }
+    
+    .location-icon {
+        color: #3b82f6;
+        margin-right: 0.5rem;
+    }
+    
+    .location-name {
+        font-weight: 500;
+    }
+    
+    .tree-node-actions {
+        display: flex;
+        gap: 0.25rem;
     }
     
     .tree-children {
-        margin-left: 25px;
-        border-left: 1px solid var(--border-color);
-        padding-left: 10px;
+        margin-left: 2rem;
+        padding-left: 1rem;
+        border-left: 1px dashed #cbd5e1;
     }
     
-    .me-2 {
-        margin-right: 10px;
+    .tree-children.collapsed {
+        display: none;
+    }
+    
+    /* Form elements */
+    .form-text {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+    }
+    
+    .text-danger {
+        color: #ef4444;
+    }
+    
+    /* Button styles */
+    .btn-icon {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 {% endblock %}
