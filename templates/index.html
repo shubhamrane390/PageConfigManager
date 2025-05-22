@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Control System</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">Access Control System</div>
+            <div class="user-info">
+                <span class="user-name">John Doe</span>
+                <a href="#" class="btn btn-sm">Logout</a>
+            </div>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul class="navbar">
+                <li><a href="/" class="active">Dashboard</a></li>
+                <li><a href="/organisations/">Organizations</a></li>
+                <li><a href="/page_configs/view/">Page Configurations</a></li>
+                <li><a href="/admin/">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Access Control Dashboard</h2>
+                </div>
+                <div class="card-body">
+                    <p>Welcome to the Access Control System. This dashboard provides an overview of your organizations and access control settings.</p>
+                    
+                    <div class="mt-3">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions" style="display: flex; gap: 10px; margin-top: 10px;">
+                            <a href="/organisations/create/" class="btn btn-primary">
+                                Create Organization
+                            </a>
+                            <a href="/page_configs/view/" class="btn btn-success">
+                                Manage Page Configurations
+                            </a>
+                            <a href="/organisations/" class="btn btn-info">
+                                View Organizations
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Organizations</h2>
+                </div>
+                <div class="card-body">
+                    <div id="organizationsList">
+                        <p>Loading organizations...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2025 Access Control System</p>
+        </div>
+    </footer>
+    
+    <script>
+        // DOM ready function
+        function onDOMReady(callback) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', callback);
+            } else {
+                callback();
+            }
+        }
+        
+        // Fetch organizations on page load
+        onDOMReady(async () => {
+            const container = document.getElementById('organizationsList');
+            
+            try {
+                const response = await fetch('/organisations/list/');
+                if (!response.ok) {
+                    throw new Error('Failed to load organizations');
+                }
+                
+                const organizations = await response.json();
+                
+                if (organizations && organizations.length > 0) {
+                    const table = document.createElement('table');
+                    table.className = 'table';
+                    
+                    // Table header
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = `
+                        <tr>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    `;
+                    
+                    // Table body
+                    const tbody = document.createElement('tbody');
+                    
+                    organizations.forEach(org => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${org.name}</td>
+                            <td>
+                                <a href="/organisations/${org.id}/view/" class="btn btn-sm btn-primary">View</a>
+                                <a href="/map_org_pages/${org.id}/view/" class="btn btn-sm btn-warning">Configure</a>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    container.innerHTML = '';
+                    container.appendChild(table);
+                } else {
+                    container.innerHTML = '<p>No organizations found. <a href="/organisations/create/">Create your first organization</a>.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading organizations:', error);
+                container.innerHTML = '<p>Error loading organizations. Please try again later.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

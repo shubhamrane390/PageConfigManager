@@ -15,48 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
-# Import API views
-from organisation.views import (
-    CreateOrganisationView, 
-    OrganisationDetailView, 
-    PageConfigurationView, 
-    MapPageConfigurationsView
-)
-
-# Import template views
-from organisation.template_views import (
-    DashboardView, 
-    OrganisationListView,
-    OrganisationCreateView,
-    OrganisationDetailView as OrgTemplateDetailView,
-    PageConfigView,
-    MappingView,
-    dashboard_data
-)
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    # Dashboard
-    path('', DashboardView.as_view(), name='dashboard'),
-    path('dashboard/data/', dashboard_data, name='dashboard-data'),
+    # Include organization URLs
+    path('', include('organisation.urls')),
     
-    # API endpoints
-    path('create_organisation/', CreateOrganisationView.as_view(), name='create_organisation_api'),
-    path('organisations/<int:pk>/', OrganisationDetailView.as_view(), name='organisation-detail-api'),
-    path('page_configs/', PageConfigurationView.as_view(), name='page_configs_api'),
-    path('map_org_pages/<int:id>/', MapPageConfigurationsView.as_view(), name='map_org_pages_api'),
-    
-    # Template views
-    path('organisations/', OrganisationListView.as_view(), name='organisation-list'),
-    path('organisations/create/', OrganisationCreateView.as_view(), name='organisation-create'),
-    path('organisations/<int:pk>/view/', OrgTemplateDetailView.as_view(), name='organisation-view'),
-    path('page_configs/view/', PageConfigView.as_view(), name='page-config'),
-    path('map_org_pages/<int:pk>/view/', MappingView.as_view(), name='mapping-view'),
+    # Handle redirects for old URLs
+    path('organizations/', RedirectView.as_view(url='/organisations/', permanent=True)),
 ]
 
 # Add static and media URL configurations
